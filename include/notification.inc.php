@@ -17,7 +17,9 @@
  * @author       XOOPS Development Team,
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
+
+use XoopsModules\Extgallery;
 
 /**
  * @param $category
@@ -27,8 +29,10 @@
  */
 function extgalleryNotifyIteminfo($category, $item_id)
 {
-    /** @var ExtgalleryPublicPhotoHandler $photoHandler */
-    $photoHandler = xoops_getModuleHandler('publicphoto', 'extgallery');
+    /** @var Extgallery\PublicPhotoHandler $photoHandler */
+    /** @var Extgallery\Photo $photo */
+
+    $photoHandler = Extgallery\Helper::getInstance()->getHandler('PublicPhoto');
     $photo        = $photoHandler->getPhoto($item_id);
     $item['name'] = $photo->getVar('photo_desc');
     $item['url']  = XOOPS_URL . '/modules/extgallery/public-album.php?id=' . $photo->getVar('photo_id');

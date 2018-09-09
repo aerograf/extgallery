@@ -17,66 +17,71 @@
  * @author       XOOPS Development Team
  */
 
-require_once __DIR__ . '/common.php';
-//$moduleDirName = basename(dirname(__DIR__));
-//$capsDirName   = strtoupper($moduleDirName);
-//
-//if (!defined($capsDirName . '_DIRNAME')) {
-//    //if (!defined(constant($capsDirName . '_DIRNAME'))) {
-//    define($capsDirName . '_DIRNAME', $GLOBALS['xoopsModule']->dirname());
-//    define($capsDirName . '_PATH', XOOPS_ROOT_PATH . '/modules/' . constant($capsDirName . '_DIRNAME'));
-//    define($capsDirName . '_URL', XOOPS_URL . '/modules/' . constant($capsDirName . '_DIRNAME'));
-//    define($capsDirName . '_ADMIN', constant($capsDirName . '_URL') . '/admin/index.php');
-//    define($capsDirName . '_ROOT_PATH', XOOPS_ROOT_PATH . '/modules/' . constant($capsDirName . '_DIRNAME'));
-//    define($capsDirName . '_AUTHOR_LOGOIMG', constant($capsDirName . '_URL') . '/assets/images/logoModule.png');
-//    define($capsDirName . '_UPLOAD_URL', XOOPS_UPLOAD_URL . '/' . $moduleDirName); // WITHOUT Trailing slash
-//    define($capsDirName . '_UPLOAD_PATH', XOOPS_UPLOAD_PATH . '/' . $moduleDirName); // WITHOUT Trailing slash
-//}
 
-//Configurator
-return (object)[
-    'name'            => strtoupper($moduleDirName) . ' Module Configurator',
-    'paths'           => [
-        'dirname'    => $moduleDirName,
-        'admin'      => XOOPS_ROOT_PATH . '/modules/' . $moduleDirName . '/admin',
-        //        'path'       => XOOPS_ROOT_PATH . '/modules/' . $moduleDirName,
-        //        'url'        => XOOPS_URL . '/modules/' . $moduleDirName,
-        'uploadPath' => XOOPS_UPLOAD_PATH . '/' . $moduleDirName,
-        'uploadUrl'  => XOOPS_UPLOAD_URL . '/' . $moduleDirName,
-    ],
-    'uploadFolders'   => [
-        constant($capsDirName . '_UPLOAD_PATH'),
-        constant($capsDirName . '_UPLOAD_PATH') . '/public-photo',
-        constant($capsDirName . '_UPLOAD_PATH') . '/public-photo/original',
-        constant($capsDirName . '_UPLOAD_PATH') . '/public-photo/large',
-        constant($capsDirName . '_UPLOAD_PATH') . '/public-photo/medium',
-        constant($capsDirName . '_UPLOAD_PATH') . '/public-photo/thumb',
-    ],
-    'blankFiles'      => [
-        constant($capsDirName . '_UPLOAD_PATH'),
-        constant($capsDirName . '_UPLOAD_PATH') . '/public-photo',
-        constant($capsDirName . '_UPLOAD_PATH') . '/public-photo/original',
-        constant($capsDirName . '_UPLOAD_PATH') . '/public-photo/large',
-        constant($capsDirName . '_UPLOAD_PATH') . '/public-photo/medium',
-        constant($capsDirName . '_UPLOAD_PATH') . '/public-photo/thumb',
-    ],
-    'templateFolders' => [
-        '/templates/',
-        '/templates/blocks/',
-        '/templates/admin/'
+function getConfig()
+{
+    $moduleDirName      = basename(dirname(__DIR__));
+    $moduleDirNameUpper = strtoupper($moduleDirName);
+    return (object)[
+        'name'           => strtoupper($moduleDirName) . ' Module Configurator',
+        'paths'          => [
+            'dirname'    => $moduleDirName,
+            'admin'      => XOOPS_ROOT_PATH . '/modules/' . $moduleDirName . '/admin',
+            'modPath'    => XOOPS_ROOT_PATH . '/modules/' . $moduleDirName,
+            'modUrl'     => XOOPS_URL . '/modules/' . $moduleDirName,
+            'uploadPath' => XOOPS_UPLOAD_PATH . '/' . $moduleDirName,
+            'uploadUrl'  => XOOPS_UPLOAD_URL . '/' . $moduleDirName,
+        ],
+        'uploadFolders'  => [
+            constant($moduleDirNameUpper . '_UPLOAD_PATH'),
+            constant($moduleDirNameUpper . '_UPLOAD_PATH') . '/public-photo',
+            constant($moduleDirNameUpper . '_UPLOAD_PATH') . '/public-photo/original',
+            constant($moduleDirNameUpper . '_UPLOAD_PATH') . '/public-photo/large',
+            constant($moduleDirNameUpper . '_UPLOAD_PATH') . '/public-photo/medium',
+            constant($moduleDirNameUpper . '_UPLOAD_PATH') . '/public-photo/thumb',
+            //XOOPS_UPLOAD_PATH . '/flags'
+        ],
+        'copyBlankFiles' => [
+            constant($moduleDirNameUpper . '_UPLOAD_PATH'),
+            constant($moduleDirNameUpper . '_UPLOAD_PATH') . '/public-photo',
+            constant($moduleDirNameUpper . '_UPLOAD_PATH') . '/public-photo/original',
+            constant($moduleDirNameUpper . '_UPLOAD_PATH') . '/public-photo/large',
+            constant($moduleDirNameUpper . '_UPLOAD_PATH') . '/public-photo/medium',
+            constant($moduleDirNameUpper . '_UPLOAD_PATH') . '/public-photo/thumb',
+            //XOOPS_UPLOAD_PATH . '/flags'
+        ],
 
-    ],
-    'oldFiles'        => [
-        '/include/update_functions.php',
-        '/include/install_functions.php'
-    ],
-    'oldFolders'      => [
-        '/images',
-        '/css',
-        '/js',
-        '/tcpdf',
-        '/images',
-    ],
-    'modCopyright'    => "<a href='https://xoops.org' title='XOOPS Project' target='_blank'>
-                     <img src='" . constant($capsDirName . '_AUTHOR_LOGOIMG') . '\' alt=\'XOOPS Project\' /></a>',
-];
+        'copyTestFolders' => [
+            //        constant($moduleDirNameUpper . '_UPLOAD_PATH'),
+            //[
+            //    constant($moduleDirNameUpper . '_PATH') . '/testdata/images',
+            //    constant($moduleDirNameUpper . '_UPLOAD_PATH') . '/images',
+            //]
+        ],
+
+        'templateFolders' => [
+            '/templates/',
+            '/templates/blocks/',
+            '/templates/admin/'
+
+        ],
+        'oldFiles'        => [
+            '/class/request.php',
+            '/class/registry.php',
+            '/class/utilities.php',
+            '/class/util.php',
+            '/include/constants.php',
+            '/include/functions.php',
+            '/ajaxrating.txt',
+        ],
+        'oldFolders'      => [
+            '/images',
+            '/css',
+            '/js',
+            '/tcpdf',
+            '/images',
+        ],
+        'modCopyright'    => "<a href='https://xoops.org' title='XOOPS Project' target='_blank'>
+                     <img src='" . constant($moduleDirNameUpper . '_AUTHOR_LOGOIMG') . '\' alt=\'XOOPS Project\' /></a>',
+    ];
+}

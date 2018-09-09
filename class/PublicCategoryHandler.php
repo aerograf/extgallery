@@ -1,4 +1,5 @@
-<?php
+<?php namespace XoopsModules\Extgallery;
+
 /**
  * ExtGallery Class Manager
  *
@@ -15,34 +16,21 @@
  * @package     ExtGallery
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+use XoopsModules\Extgallery;
 
-require_once __DIR__ . '/catHandler.php';
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 
-/**
- * Class ExtgalleryPublicCat
- */
-class ExtgalleryPublicCat extends ExtgalleryCat
-{
-    /**
-     * ExtgalleryPublicCat constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-}
 
 /**
- * Class ExtgalleryPublicCatHandler
+ * Class Extgallery\PublicCategoryHandler
  */
-class ExtgalleryPublicCatHandler extends ExtgalleryCatHandler
+class PublicCategoryHandler extends Extgallery\CategoryHandler
 {
     /**
-     * ExtgalleryPublicCatHandler constructor.
-     * @param XoopsDatabase $db
+     * Extgallery\PublicCategoryHandler constructor.
+     * @param \XoopsDatabase $db
      */
-    public function __construct(XoopsDatabase $db)
+    public function __construct(\XoopsDatabase $db)
     {
         parent::__construct($db, 'public');
     }
@@ -54,36 +42,36 @@ class ExtgalleryPublicCatHandler extends ExtgalleryCatHandler
      */
     public function createCat($data)
     {
-        /** @var ExtgalleryPublicCat $cat */
+        /** @var Extgallery\PublicCategory $cat */
         $cat = $this->create();
         $cat->setVars($data);
 
-        if (!$this->_haveValidParent($cat)) {
+        if (!$this->hasValidParent($cat)) {
             return false;
         }
 
         $this->insert($cat, true);
         $this->rebuild();
 
-        $criteria = new CriteriaCompo();
+        $criteria = new \CriteriaCompo();
         $criteria->setSort('cat_id');
         $criteria->setOrder('DESC');
         $criteria->setLimit(1);
 
-        $cat = $this->getObjects($criteria);
+        $cat =& $this->getObjects($criteria);
         $cat = $cat[0];
 
         $moduleId = $GLOBALS['xoopsModule']->getVar('mid');
 
         // Retriving permission mask
-        /** @var XoopsGroupPermHandler $gpermHandler */
+        /** @var \XoopsGroupPermHandler $gpermHandler */
         $gpermHandler = xoops_getHandler('groupperm');
         $moduleId     = $GLOBALS['xoopsModule']->getVar('mid');
         $groups       = $GLOBALS['xoopsUser']->getGroups();
 
-        $criteria = new CriteriaCompo();
-        $criteria->add(new Criteria('gperm_name', 'extgallery_public_mask'));
-        $criteria->add(new Criteria('gperm_modid', $moduleId));
+        $criteria = new \CriteriaCompo();
+        $criteria->add(new \Criteria('gperm_name', 'extgallery_public_mask'));
+        $criteria->add(new \Criteria('gperm_modid', $moduleId));
         $permMask = $gpermHandler->getObjects($criteria);
 
         // Retriving group list
@@ -109,14 +97,15 @@ class ExtgalleryPublicCatHandler extends ExtgalleryCatHandler
                 }
             }
         }
+        return true;
     }
 
     /**
-     * @param XoopsObject $cat
+     * @param \XoopsObject $cat
      *
      * @return bool
      */
-    public function _haveValidParent(XoopsObject $cat = null)
+    public function hasValidParent(\XoopsObject $cat = null)
     {
         // Check if haven't photo in parent category (parent category isn't an album)
         $parentCat = $this->get($cat->getVar('cat_pid'));
@@ -125,10 +114,10 @@ class ExtgalleryPublicCatHandler extends ExtgalleryCatHandler
     }
 
     /**
-     * @return ExtgalleryPublicPermHandler
+     * @return Extgallery\PublicPermHandler
      */
-    public function _getPermHandler()
+    public function getPermHandler()
     {
-        return ExtgalleryPublicPermHandler::getInstance();
+        return Extgallery\PublicPermHandler::getInstance();
     }
 }

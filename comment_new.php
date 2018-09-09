@@ -15,13 +15,15 @@
  * @package     ExtGallery
  */
 
+use XoopsModules\Extgallery;
+
 include __DIR__ . '/../../mainfile.php';
 
 $com_itemid = isset($_GET['com_itemid']) ? (int)$_GET['com_itemid'] : 0;
 if ($com_itemid > 0) {
-    /** @var ExtgalleryPhotoHandler $photoHandler */
-    $photoHandler = xoops_getModuleHandler('publicphoto', 'extgallery');
-    /** @var ExtgalleryPhoto $photo */
+    /** @var Extgallery\PublicPhotoHandler $photoHandler */
+    $photoHandler = Extgallery\Helper::getInstance()->getHandler('PublicPhoto');
+    /** @var Extgallery\Photo $photo */
     $photo = $photoHandler->getPhoto($com_itemid);
     if ($photo->getVar('photo_title')) {
         $title = $photo->getVar('photo_title');

@@ -1,4 +1,5 @@
-<?php
+<?php namespace XoopsModules\Extgallery;
+
 /**
  * ExtGallery Class Manager
  *
@@ -15,15 +16,18 @@
  * @package     ExtGallery
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+
+use XoopsModules\Extgallery;
+
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 
 /**
- * Class ExtgalleryPublicPermHandler
+ * Class Extgallery\PublicPermHandler
  */
-class ExtgalleryPublicPermHandler
+class PublicPermHandler
 {
     /**
-     * @return ExtgalleryPublicPermHandler
+     * @return Extgallery\PublicPermHandler
      */
     public static function getInstance()
     {
@@ -40,7 +44,7 @@ class ExtgalleryPublicPermHandler
      *
      * @return string
      */
-    public function _getUserGroup($user)
+    public function getUserGroup($user)
     {
         if (is_a($user, 'XoopsUser')) {
             return $user->getGroups();
@@ -50,35 +54,35 @@ class ExtgalleryPublicPermHandler
     }
 
     /**
-     * @param XoopsUser $user
-     * @param           $perm
+     * @param \XoopsUser $user
+     * @param            $perm
      *
      * @return mixed
      */
-    public function getAuthorizedPublicCat(XoopsUser $user, $perm)
+    public function getAuthorizedPublicCat(\XoopsUser $user, $perm)
     {
         static $authorizedCat;
         $userId = $user ? $user->getVar('uid') : 0;
         if (!isset($authorizedCat[$perm][$userId])) {
-            /** @var XoopsGroupPermHandler $groupPermHandler */
+            /** @var \XoopsGroupPermHandler $groupPermHandler */
             $groupPermHandler = xoops_getHandler('groupperm');
-            /** @var XoopsModuleHandler $moduleHandler */
+            /** @var \XoopsModuleHandler $moduleHandler */
             $moduleHandler                 = xoops_getHandler('module');
             $module                        = $moduleHandler->getByDirname('extgallery');
-            $authorizedCat[$perm][$userId] = $groupPermHandler->getItemIds($perm, $this->_getUserGroup($user), $module->getVar('mid'));
+            $authorizedCat[$perm][$userId] = $groupPermHandler->getItemIds($perm, $this->getUserGroup($user), $module->getVar('mid'));
         }
 
         return $authorizedCat[$perm][$userId];
     }
 
     /**
-     * @param XoopsUser $user
-     * @param $perm
-     * @param $catId
+     * @param \XoopsUser $user
+     * @param            $perm
+     * @param            $catId
      *
      * @return bool
      */
-    public function isAllowed(XoopsUser $user, $perm, $catId)
+    public function isAllowed(\XoopsUser $user, $perm, $catId)
     {
         $autorizedCat = $this->getAuthorizedPublicCat($user, $perm);
 

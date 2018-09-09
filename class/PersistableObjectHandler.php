@@ -1,4 +1,5 @@
-<?php
+<?php namespace XoopsModules\Extgallery;
+
 /**
  * ExtGallery Class Manager
  *
@@ -15,6 +16,8 @@
  * @package     ExtGallery
  */
 
+use XoopsModules\Extgallery;
+
 /**
  * Persistable Object Handler class.
  * This class is responsible for providing data access mechanisms to the data source
@@ -24,7 +27,7 @@
  * @copyright copyright (c) 2000-2004 XOOPS.org
  * @package   Kernel
  */
-class ExtgalleryPersistableObjectHandler extends XoopsPersistableObjectHandler //XoopsObjectHandler
+class PersistableObjectHandler extends \XoopsPersistableObjectHandler //XoopsObjectHandler
 {
     /**#@+
      * Information about the class, the handler is managing
@@ -40,22 +43,22 @@ class ExtgalleryPersistableObjectHandler extends XoopsPersistableObjectHandler /
     /**
      * Constructor - called from child classes
      *
-     * @param XoopsDatabase $db        {@link XoopsDatabase}
-     *                                 object
-     * @param string        $tablename Name of database table
-     * @param string        $classname Name of Class, this handler is managing
-     * @param string        $keyname   Name of the property, holding the key
+     * @param \XoopsDatabase $db        {@link XoopsDatabase}
+     *                                  object
+     * @param string         $tablename Name of database table
+     * @param string         $classname Name of Class, this handler is managing
+     * @param string         $keyname   Name of the property, holding the key
      *
-     * @param bool          $idenfierName
-     *
+     * @param bool           $idenfierName
      */
 
-    public function __construct(XoopsDatabase $db, $tablename, $classname, $keyname, $idenfierName = false)
+    public function __construct(\XoopsDatabase $db, $tablename, $classname, $keyname, $idenfierName = false)
     {
         parent::__construct($db);
-        //        $db = XoopsDatabaseFactory::getDatabaseConnection();
+        //        $db = \XoopsDatabaseFactory::getDatabaseConnection();
         $this->table     = $db->prefix($tablename);
         $this->keyName   = $keyname;
+//        $this->className = '\\XoopsModules\\Extgallery\\' .$classname;
         $this->className = $classname;
         if (false !== $idenfierName) {
             $this->identifierName = $idenfierName;
@@ -67,16 +70,17 @@ class ExtgalleryPersistableObjectHandler extends XoopsPersistableObjectHandler /
      *
      * @param bool $isNew Flag the new objects as "new"?
      *
-     * @return XoopsObject
+     * @return \XoopsObject
      */
 
     public function create($isNew = true)
     {
-        $obj = new $this->className();
+        $temp = '\\XoopsModules\\Extgallery\\' . $this->className;
+        $obj = new $temp;
+
         if (true === $isNew) {
             $obj->setNew();
         }
-
         return $obj;
     }
 
@@ -122,7 +126,7 @@ class ExtgalleryPersistableObjectHandler extends XoopsPersistableObjectHandler /
     public function updateFieldValue($fieldname, $fieldvalue, $criteria = null, $force = true)
     {
         $sql = 'UPDATE ' . $this->table . ' SET ' . $fieldname . ' = ' . $fieldvalue;
-        if (null !== $criteria && is_subclass_of($criteria, 'criteriaelement')) {
+        if (null !== $criteria && is_subclass_of($criteria, 'CriteriaElement')) {
             $sql .= ' ' . $criteria->renderWhere();
         }
         $result = false !== $force ? $this->db->queryF($sql) : $this->db->query($sql);
@@ -185,7 +189,7 @@ class ExtgalleryPersistableObjectHandler extends XoopsPersistableObjectHandler /
                             if ($externalKey['core']) {
                                 $handler = xoops_getHandler($externalKey['className']);
                             } else {
-                                $handler = xoops_getModuleHandler($externalKey['className'], 'extgallery');
+                                $handler = Extgallery\Helper::getInstance()->getHandler($externalKey['className']);
                             }
                             $cached[$externalKey['keyName']][$ret[$i][$key]] = $this->objectToArrayWithoutExternalKey($handler->{$externalKey['getMethodeName']}($ret[$i][$key]), $format);
                         }
@@ -209,7 +213,7 @@ class ExtgalleryPersistableObjectHandler extends XoopsPersistableObjectHandler /
                         if ($externalKey['core']) {
                             $handler = xoops_getHandler($externalKey['className']);
                         } else {
-                            $handler = xoops_getModuleHandler($externalKey['className'], 'extgallery');
+                            $handler = Extgallery\Helper::getInstance()->getHandler($externalKey['className']);
                         }
                         $cached[$externalKey['keyName']][$ret[$key]] = $this->objectToArrayWithoutExternalKey($handler->{$externalKey['getMethodeName']}($ret[$key]), $format);
                     }
@@ -261,23 +265,23 @@ class ExtgalleryPersistableObjectHandler extends XoopsPersistableObjectHandler /
     }
 
     /**
-     * @param null|CriteriaElement $criteria
+     * @param null|\CriteriaElement $criteria
      * @param string               $sum
      *
      * @return array|int|string
      */
-    public function getSum(CriteriaElement $criteria = null, $sum = '*')
+    public function getSum(\CriteriaElement $criteria = null, $sum = '*')
     {
         $field   = '';
         $groupby = false;
-        if (null !== $criteria && is_subclass_of($criteria, 'criteriaelement')) {
+        if (null !== $criteria && is_subclass_of($criteria, 'CriteriaElement')) {
             if ('' != $criteria->groupby) {
                 $groupby = true;
                 $field   = $criteria->groupby . ', '; //Not entirely secure unless you KNOW that no criteria's groupby clause is going to be mis-used
             }
         }
         $sql = 'SELECT ' . $field . "SUM($sum) FROM " . $this->table;
-        if (null !== $criteria && is_subclass_of($criteria, 'criteriaelement')) {
+        if (null !== $criteria && is_subclass_of($criteria, 'CriteriaElement')) {
             $sql .= ' ' . $criteria->renderWhere();
             if ('' != $criteria->groupby) {
                 $sql .= $criteria->getGroupby();
@@ -293,7 +297,7 @@ class ExtgalleryPersistableObjectHandler extends XoopsPersistableObjectHandler /
             return $sum;
         } else {
             $ret = [];
-            while (list($id, $sum) = $this->db->fetchRow($result)) {
+            while (false !== (list($id, $sum) = $this->db->fetchRow($result))) {
                 $ret[$id] = $sum;
             }
 
@@ -302,23 +306,23 @@ class ExtgalleryPersistableObjectHandler extends XoopsPersistableObjectHandler /
     }
 
     /**
-     * @param null|CriteriaElement $criteria
-     * @param string               $max
+     * @param \CriteriaElement $criteria
+     * @param string           $max
      *
      * @return array|int|string
      */
-    public function getMax(CriteriaElement $criteria = null, $max = '*')
+    public function getMax(\CriteriaElement $criteria = null, $max = '*')
     {
         $field   = '';
         $groupby = false;
-        if (null !== $criteria && is_subclass_of($criteria, 'criteriaelement')) {
+        if (null !== $criteria && is_subclass_of($criteria, 'CriteriaElement')) {
             if ('' != $criteria->groupby) {
                 $groupby = true;
                 $field   = $criteria->groupby . ', '; //Not entirely secure unless you KNOW that no criteria's groupby clause is going to be mis-used
             }
         }
         $sql = 'SELECT ' . $field . "MAX($max) FROM " . $this->table;
-        if (null !== $criteria && is_subclass_of($criteria, 'criteriaelement')) {
+        if (null !== $criteria && is_subclass_of($criteria, 'CriteriaElement')) {
             $sql .= ' ' . $criteria->renderWhere();
             if ('' != $criteria->groupby) {
                 $sql .= $criteria->getGroupby();
@@ -334,7 +338,7 @@ class ExtgalleryPersistableObjectHandler extends XoopsPersistableObjectHandler /
             return $max;
         } else {
             $ret = [];
-            while (list($id, $max) = $this->db->fetchRow($result)) {
+            while (false !== (list($id, $max) = $this->db->fetchRow($result))) {
                 $ret[$id] = $max;
             }
 
@@ -343,17 +347,17 @@ class ExtgalleryPersistableObjectHandler extends XoopsPersistableObjectHandler /
     }
 
     /**
-     * @param null|CriteriaElement $criteria
-     * @param string               $avg
+     * @param \CriteriaElement $criteria
+     * @param string           $avg
      *
      * @return int
      */
-    public function getAvg(CriteriaElement $criteria = null, $avg = '*')
+    public function getAvg(\CriteriaElement $criteria = null, $avg = '*')
     {
         $field = '';
 
         $sql = 'SELECT ' . $field . "AVG($avg) FROM " . $this->table;
-        if (null !== $criteria && is_subclass_of($criteria, 'criteriaelement')) {
+        if (null !== $criteria && is_subclass_of($criteria, 'CriteriaElement')) {
             $sql .= ' ' . $criteria->renderWhere();
         }
         $result = $this->db->query($sql);

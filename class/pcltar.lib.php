@@ -1,4 +1,5 @@
-<?php
+<?php namespace XoopsModules\Extgallery;
+
 // --------------------------------------------------------------------------------
 // PhpConcept Library - Tar Module 1.3.1
 // --------------------------------------------------------------------------------
@@ -23,6 +24,8 @@
 //   The use of this software is at the risk of the user.
 //
 // --------------------------------------------------------------------------------
+
+use XoopsModules\Extgallery;
 
 // ----- Look for double include
 if (!defined('PCL_TAR')) {
@@ -560,7 +563,7 @@ if (!defined('PCL_TAR')) {
         // ----- Look if the $p_index is really an integer
         if (is_int($p_index)) {
             // ----- Call the extracting fct
-            if (1 != ($v_result = PclTarHandleExtractByIndexList($p_tarname, "$p_index", $p_list, $p_path, $p_remove_path, $v_tar_mode))) {
+            if (1 != ($v_result = PclTarHandleExtractByIndexList($p_tarname, (string)$p_index, $p_list, $p_path, $p_remove_path, $v_tar_mode))) {
                 TrFctEnd(__FILE__, __LINE__, 0, PclErrorString());
 
                 return 0;
@@ -873,7 +876,7 @@ if (!defined('PCL_TAR')) {
                 // ----- Read new 512 block and write the already read
                 do {
                     // ----- Write the already read block
-                    $v_binary_data = pack('a512', "$v_buffer");
+                    $v_binary_data = pack('a512', $v_buffer);
                     gzputs($v_temp_tar, $v_binary_data);
 
                     ++$i;
@@ -939,7 +942,7 @@ if (!defined('PCL_TAR')) {
                 // ----- Read new 512 block and write the already read
                 do {
                     // ----- Write the already read block
-                    $v_binary_data = pack('a512', "$v_buffer");
+                    $v_binary_data = pack('a512', $v_buffer);
                     if ('tar' === $p_mode) {
                         fwrite($p_tar, $v_binary_data);
                     } else {
@@ -982,7 +985,7 @@ if (!defined('PCL_TAR')) {
                 // ----- Read new 512 block and write the already read
                 do {
                     // ----- Write the already read block
-                    $v_binary_data = pack('a512', "$v_buffer");
+                    $v_binary_data = pack('a512', (string)$v_buffer);
                     if ('tar' === $p_mode) {
                         fwrite($p_tar, $v_binary_data);
                     } else {
@@ -1236,7 +1239,7 @@ if (!defined('PCL_TAR')) {
                 // ----- Read new 512 block and write the already read
                 do {
                     // ----- Write the already read block
-                    $v_binary_data = pack('a512', "$v_buffer");
+                    $v_binary_data = pack('a512', $v_buffer);
                     gzputs($v_temp_tar, $v_binary_data);
 
                     ++$i;
@@ -1445,7 +1448,7 @@ if (!defined('PCL_TAR')) {
                 $p_hdir  = opendir($p_filename);
                 $p_hitem = readdir($p_hdir); // '.' directory
                 $p_hitem = readdir($p_hdir); // '..' directory
-                while ($p_hitem = readdir($p_hdir)) {
+                while (false !== ($p_hitem = readdir($p_hdir))) {
                     // ----- Look for a file
                     if (is_file($v_path . $p_hitem)) {
                         TrFctMessage(__FILE__, __LINE__, 4, "Add the file '" . $v_path . $p_hitem . "'");
@@ -1595,7 +1598,7 @@ if (!defined('PCL_TAR')) {
             // ----- Read the file by 512 octets blocks
             $i = 0;
             while ('' != ($v_buffer = fread($v_file, 512))) {
-                $v_binary_data = pack('a512', "$v_buffer");
+                $v_binary_data = pack('a512', (string)$v_buffer);
                 if ('tar' === $p_mode) {
                     fwrite($p_tar, $v_binary_data);
                 } else {
@@ -1985,8 +1988,8 @@ if (!defined('PCL_TAR')) {
                 $v_extract_file = false;
 
                 // ----- Look into the file list
-                for ($i = 0, $iMax = count($p_file_list); $i < $iMax; ++$i) {
-                    TrFctMessage(__FILE__, __LINE__, 2, 'Compare archived file ' . $v_header['filename'] . " from asked list file '" . $p_file_list[$i] . "'");
+                foreach ($p_file_list as $i => $iValue) {
+                    TrFctMessage(__FILE__, __LINE__, 2, 'Compare archived file ' . $v_header['filename'] . " from asked list file '" . $iValue . "'");
 
                     // ----- Look if it is a directory
                     if ('/' === substr($p_file_list[$i], -1)) {
@@ -1994,7 +1997,7 @@ if (!defined('PCL_TAR')) {
 
                         // ----- Look if the directory is in the filename path
                         if ((strlen($v_header['filename']) > strlen($p_file_list[$i]))
-                            && (substr($v_header['filename'], 0, strlen($p_file_list[$i])) == $p_file_list[$i])) {
+                            && (substr($v_header['filename'], 0, strlen($p_file_list[$i])) == $iValue)) {
                             // ----- The file is in the directory, so extract it
                             TrFctMessage(__FILE__, __LINE__, 2, 'File ' . $v_header['filename'] . " is in directory '$p_file_list[$i]' : extract it");
                             $v_extract_file = true;
@@ -2003,7 +2006,7 @@ if (!defined('PCL_TAR')) {
                             break;
                         }
                     } // ----- It is a file, so compare the file names
-                    elseif ($p_file_list[$i] == $v_header['filename']) {
+                    elseif ($iValue == $v_header['filename']) {
                         // ----- File found
                         TrFctMessage(__FILE__, __LINE__, 2, 'File ' . $v_header['filename'] . ' should be extracted');
                         $v_extract_file = true;
@@ -3447,7 +3450,7 @@ if (!defined('PCL_TAR')) {
     {
         $v_result = 1;
 
-        TrFctStart(__FILE__, __LINE__, 'PclTarHandlerDirCheck', "$p_dir");
+        TrFctStart(__FILE__, __LINE__, 'PclTarHandlerDirCheck', (string)$p_dir);
 
         // ----- Check the directory availability
         if (is_dir($p_dir) || ('' == $p_dir)) {

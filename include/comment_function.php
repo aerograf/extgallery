@@ -15,7 +15,9 @@
  * @package     ExtGallery
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+use XoopsModules\Extgallery;
+
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 
 /**
  * @param $photoId
@@ -23,7 +25,7 @@
  */
 function extgalleryComUpdate($photoId, $nbCom)
 {
-    /** @var ExtgalleryPhotoHandler $photoHandler */
-    $photoHandler = xoops_getModuleHandler('publicphoto', 'extgallery');
+    /** @var Extgallery\PhotoHandler $photoHandler */
+    $photoHandler = Extgallery\Helper::getInstance()->getHandler('PublicPhoto');
     $photoHandler->modifyPhoto($photoId, ['photo_comment' => $nbCom]);
 }

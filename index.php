@@ -15,14 +15,16 @@
  * @package     ExtGallery
  */
 
+use XoopsModules\Extgallery;
+
 include __DIR__ . '/header.php';
 $moduleDirName = basename(__DIR__);
 
 $GLOBALS['xoopsOption']['template_main'] = $moduleDirName . '_index.tpl';
 include XOOPS_ROOT_PATH . '/header.php';
 
-/** @var ExtgalleryPublicCatHandler $catHandler */
-$catHandler = xoops_getModuleHandler('publiccat', $moduleDirName);
+/** @var Extgallery\PublicCategoryHandler $catHandler */
+$catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
 
 $cats = $catHandler->objectToArray($catHandler->getChildren(0), ['photo_id']);
 $xoopsTpl->assign('cats', $cats);
@@ -32,7 +34,7 @@ $attributes['rel']   = $rel;
 $attributes['type']  = 'application/rss+xml';
 $attributes['title'] = _MD_EXTGALLERY_RSS;
 $attributes['href']  = XOOPS_URL . '/modules/extgallery/public-rss.php';
-/** @var xos_opal_Theme $xoTheme */
+/** @var \xos_opal_Theme $xoTheme */
 $xoTheme->addMeta('link', $rel, $attributes);
 $xoTheme->addStylesheet('modules/extgallery/assets/css/style.css');
 
@@ -56,9 +58,9 @@ if (null !== $GLOBALS['xoopsUser'] && is_object($GLOBALS['xoopsUser'])) {
             $albumurl      = 'public-useralbum.php?id=' . $GLOBALS['xoopsUser']->uid();
         }
 
-        require_once XOOPS_ROOT_PATH . "/modules/{$moduleDirName}/class/publicPerm.php";
+//        require_once XOOPS_ROOT_PATH . "/modules/{$moduleDirName}/class/publicPerm.php";
 
-        $permHandler = ExtgalleryPublicPermHandler::getInstance();
+        $permHandler = Extgallery\PublicPermHandler::getInstance();
         if (count($permHandler->getAuthorizedPublicCat($GLOBALS['xoopsUser'], 'public_upload')) > 0) {
             $uploadlinkname = _MD_EXTGALLERY_PUBLIC_UPLOAD;
             if ('html' === $GLOBALS['xoopsModuleConfig']['use_extended_upload']) {
@@ -71,8 +73,12 @@ if (null !== $GLOBALS['xoopsUser'] && is_object($GLOBALS['xoopsUser'])) {
 }
 $xoopsTpl->assign('albumlinkname', $albumlinkname);
 $xoopsTpl->assign('albumurl', $albumurl);
-$xoopsTpl->assign('uploadlinkname', $uploadlinkname);
-$xoopsTpl->assign('uploadurl', $uploadurl);
+if (isset($uploadlinkname)) {
+    $xoopsTpl->assign('uploadlinkname', $uploadlinkname);
+}
+if (isset($uploadurl)) {
+    $xoopsTpl->assign('uploadurl', $uploadurl);
+}
 
 // end pk mod ------------------------------
 

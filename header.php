@@ -1,21 +1,19 @@
 <?php
 
+use XoopsModules\Extgallery;
+
 include __DIR__ . '/../../mainfile.php';
 $moduleDirName = basename(__DIR__);
 require_once __DIR__ . '/include/common.php';
 
 require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
 
-require_once __DIR__ . '/class/utility.php';
+//require_once __DIR__ . '/class/Utility.php';
 
-$myts = MyTextSanitizer::getInstance();
+$myts = \MyTextSanitizer::getInstance();
+$helper = Extgallery\Helper::getInstance();
 
-if (false !== ($moduleHelper = Xmf\Module\Helper::getHelper($moduleDirName))) {
-} else {
-    $moduleHelper = Xmf\Module\Helper::getHelper('system');
-}
-
-$moduleHelper->loadLanguage('main');
+$helper->loadLanguage('main');
 
 //------------------------------------------------------
 // Getting eXtCal object's handler

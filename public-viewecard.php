@@ -15,12 +15,14 @@
  * @package     ExtGallery
  */
 
+use XoopsModules\Extgallery;
+
 include __DIR__ . '/header.php';
 
 $GLOBALS['xoopsOption']['template_main'] = 'extgallery_public-viewecard.tpl';
 include XOOPS_ROOT_PATH . '/header.php';
 
-$myts = MyTextSanitizer::getInstance();
+$myts = \MyTextSanitizer::getInstance();
 
 if (isset($_GET['id'])) {
     $ecardId = $myts->addSlashes($_GET['id']);
@@ -28,7 +30,7 @@ if (isset($_GET['id'])) {
     $ecardId = 0;
 }
 
-$ecardHandler = xoops_getModuleHandler('publicecard', 'extgallery');
+$ecardHandler = Extgallery\Helper::getInstance()->getHandler('PublicEcard');
 
 $ecardObj = $ecardHandler->getEcard($ecardId);
 

@@ -1,4 +1,5 @@
-<?php
+<?php namespace XoopsModules\Extgallery;
+
 /**
  * ExtGallery Class Manager
  *
@@ -15,19 +16,20 @@
  * @package     ExtGallery
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+use XoopsModules\Extgallery;
 
-require_once __DIR__ . '/ExtgalleryPersistableObjectHandler.php';
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
+
 
 /**
- * Class ExtgalleryQuota
+ * Class Extgallery\Quota
  */
-class ExtgalleryQuota extends XoopsObject
+class Quota extends \XoopsObject
 {
     public $externalKey = [];
 
     /**
-     * ExtgalleryQuota constructor.
+     * Extgallery\Quota constructor.
      */
     public function __construct()
     {
@@ -48,17 +50,17 @@ class ExtgalleryQuota extends XoopsObject
 }
 
 /**
- * Class ExtgalleryQuotaHandler
+ * Class Extgallery\QuotaHandler
  */
-class ExtgalleryQuotaHandler extends ExtgalleryPersistableObjectHandler
+class QuotaHandler extends Extgallery\PersistableObjectHandler
 {
     /**
-     * ExtgalleryQuotaHandler constructor.
-     * @param XoopsDatabase $db
+     * Extgallery\QuotaHandler constructor.
+     * @param \XoopsDatabase $db
      */
-    public function __construct(XoopsDatabase $db)
+    public function __construct(\XoopsDatabase $db)
     {
-        parent::__construct($db, 'extgallery_quota', 'ExtgalleryQuota', 'quota_id');
+        parent::__construct($db, 'extgallery_quota', 'Extgallery\Quota', 'quota_id');
     }
 
     /**
@@ -79,7 +81,7 @@ class ExtgalleryQuotaHandler extends ExtgalleryPersistableObjectHandler
      */
     public function deleteQuota()
     {
-        $criteria = new Criteria('quota_name', 'private');
+        $criteria = new \Criteria('quota_name', 'private');
 
         return $this->deleteAll($criteria);
     }
@@ -88,14 +90,14 @@ class ExtgalleryQuotaHandler extends ExtgalleryPersistableObjectHandler
      * @param $groupid
      * @param $quotaName
      *
-     * @return XoopsObject
+     * @return \XoopsObject
      */
     public function getQuota($groupid, $quotaName)
     {
-        $criteria = new CriteriaCompo();
-        $criteria->add(new Criteria('groupid', $groupid));
-        $criteria->add(new Criteria('quota_name', $quotaName));
-        $ret = $this->getObjects($criteria);
+        $criteria = new \CriteriaCompo();
+        $criteria->add(new \Criteria('groupid', $groupid));
+        $criteria->add(new \Criteria('quota_name', $quotaName));
+        $ret =& $this->getObjects($criteria);
         if (empty($ret)) {
             return $this->create();
         } else {

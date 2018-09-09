@@ -1,4 +1,5 @@
-<?php
+<?php namespace XoopsModules\Extgallery;
+
 /**
  * ExtGallery Class Manager
  *
@@ -15,14 +16,16 @@
  * @package     ExtGallery
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+use XoopsModules\Extgallery;
+
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 
 require_once XOOPS_ROOT_PATH . '/class/mail/xoopsmultimailer.php';
 
 /**
- * Class extgalleryMailer
+ * Class Extgallery\Mailer
  */
-class extgalleryMailer
+class Mailer
 {
     public $mailer;
     public $type;
@@ -43,7 +46,7 @@ class extgalleryMailer
      */
     public function __construct($type)
     {
-        $this->mailer = new XoopsMultiMailer();
+        $this->mailer = new \XoopsMultiMailer();
         $this->type   = $type;
     }
 
@@ -87,7 +90,11 @@ class extgalleryMailer
         $this->mailer->AltBody  = $this->loadTemplate('ecard_text.tpl');
         $this->mailer->addAddress($this->toEmail, $this->toName);
         //$this->mailer->AddReplyTo($this->fromEmail, $this->fromName);
-        $this->mailer->send();
+        try {
+            $this->mailer->send();
+        } catch (\phpmailerException $e) {
+            echo 'Caught exception: ', $e->getMessage(), "\n", '<br>';
+        }
     }
 
     public function assignTags()
@@ -117,7 +124,7 @@ class extgalleryMailer
         } else {
             $path = XOOPS_ROOT_PATH . '/modules/extgallery/language/english/mail_template/' . $name;
         }
-        $fd   = @fopen($path, 'r');
+        $fd   = @fopen($path, 'rb');
         $body = fread($fd, filesize($path));
         // replace tags with actual values
         foreach ($this->tags as $k => $v) {

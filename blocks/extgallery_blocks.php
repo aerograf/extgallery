@@ -14,18 +14,24 @@
  * @license     GNU GPL 2 (http://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
  * @author      Zoullou (http://www.zoullou.net)
  * @package     ExtGallery
- * @param $options
+ * @param array $options
  * @return array
  */
 
+use XoopsModules\Extgallery;
+
 // Manage photo blocks
+/**
+ * @param array $options
+ * @return array
+ */
 function extgalleryPhotoShow($options)
 {
     global $xoopsConfig;
     $photos = [];
 
-    /** @var ExtgalleryPhotoHandler $photoHandler */
-    $photoHandler = xoops_getModuleHandler('publicphoto', 'extgallery');
+    /** @var Extgallery\PhotoHandler $photoHandler */
+    $photoHandler = Extgallery\Helper::getInstance()->getHandler('PublicPhoto');
 
     $param                = ['limit' => $options[0]];
     $direction            = $options[1];
@@ -190,7 +196,7 @@ function extgalleryPhotoShow($options)
 // converts a 2D array in a comma separated list (or separator of our choice)
 /**
  * @param $sep
- * @param $array
+ * @param array $array
  *
  * @return string
  */
@@ -198,7 +204,7 @@ function implodeArray2Dextgallery($sep, $array)
 {
     $num = count($array);
     $str = '';
-    for ($i = 0; $i < $num; ++$i) {
+    foreach ($array as $i => $iValue) {
         if ($i) {
             $str .= $sep;
         }
@@ -210,9 +216,9 @@ function implodeArray2Dextgallery($sep, $array)
 
 // Manage Top Submitter blocks
 /**
- * @param $options
+ * @param array $options
  *
- * @return string
+ * @return string|array
  */
 function extgalleryTopSubmitterShow($options)
 {
@@ -248,14 +254,15 @@ function extgalleryTopSubmitterShow($options)
 
 // Manage Ajax photos
 /**
- * @param $options
+ * @param array $options
  *
  * @return array
  */
 function extgalleryAjax($options)
 {
-    /** @var ExtgalleryPhotoHandler $photoHandler */
-    $photoHandler       = xoops_getModuleHandler('publicphoto', 'extgallery');
+    $photos = [];
+    /** @var Extgallery\PhotoHandler $photoHandler */
+    $photoHandler       = Extgallery\Helper::getInstance()->getHandler('PublicPhoto');
     $param              = ['limit' => $options[0]];
     $photoHandlertype   = $options[1];
     $jquery             = $options[2];
@@ -409,19 +416,19 @@ function extgalleryAjax($options)
 
 // Options photo blocks
 /**
- * @param $options
+ * @param array $options
  *
  * @return string
  */
 function extgalleryBlockEdit($options)
 {
 
-    /** @var ExtgalleryCat $catHandler */
-    $catHandler = xoops_getModuleHandler('publiccat', 'extgallery');
+    /** @var Extgallery\Category $catHandler */
+    $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
 
     $form = _MB_EXTGALLERY_PHOTO_NUMBER . ' : <input name="options[]" size="5" maxlength="255" value="' . $options[0] . '" type="text"><br>';
 
-    $Selected = new XoopsFormSelect(_MB_EXTGALLERY_DIRECTION, 'options[]', $options[1]);
+    $Selected = new \XoopsFormSelect(_MB_EXTGALLERY_DIRECTION, 'options[]', $options[1]);
     $Selected->addOption('0', _MB_EXTGALLERY_HORIZONTALLY);
     $Selected->addOption('1', _MB_EXTGALLERY_VERTICALLY);
     $Selected->addOption('2', _MB_EXTGALLERY_TABLE);
@@ -437,7 +444,7 @@ function extgalleryBlockEdit($options)
 
     $form .= _MB_EXTGALLERY_DISPLAY_TITLE . ' : <input type="radio" name="options[]" value="1"' . $yChecked . '>&nbsp;' . _YES . '&nbsp;&nbsp;<input type="radio" name="options[]" value="0"' . $nChecked . '>' . _NO . '<br>';
 
-    $effectTypeSelect = new XoopsFormSelect(_MB_EXTGALLERY_SHOW_TYPE, 'options[]', $options[3]);
+    $effectTypeSelect = new \XoopsFormSelect(_MB_EXTGALLERY_SHOW_TYPE, 'options[]', $options[3]);
     $effectTypeSelect->addOption('RandomPhoto', _MB_EXTGALLERY_TYPE_OP1);
     $effectTypeSelect->addOption('LastPhoto', _MB_EXTGALLERY_TYPE_OP2);
     $effectTypeSelect->addOption('TopViewPhoto', _MB_EXTGALLERY_TYPE_OP3);
@@ -445,14 +452,14 @@ function extgalleryBlockEdit($options)
     $effectTypeSelect->addOption('TopEcardPhoto', _MB_EXTGALLERY_TYPE_OP5);
     $form .= _MB_EXTGALLERY_SHOW_TYPE . ' : ' . $effectTypeSelect->render() . '<br>';
 
-    $jqSelect = new XoopsFormSelect(_MB_EXTGALLERY_JQUERY, 'options[]', $options[4]);
+    $jqSelect = new \XoopsFormSelect(_MB_EXTGALLERY_JQUERY, 'options[]', $options[4]);
     $jqSelect->addOption('true', _MB_EXTGALLERY_TRUE);
     $jqSelect->addOption('false', _MB_EXTGALLERY_FALSE);
     $form .= _MB_EXTGALLERY_JQUERY . ' : ' . $jqSelect->render() . '<br>';
 
     //select option
     $form             .= "<fieldset><legend style='font-weight:bold; color:#990000;'>" . _MB_EXTGALLERY_USE_AJAX_EFFECTS . '</legend>';
-    $ajaxeffectSelect = new XoopsFormSelect(_MB_EXTGALLERY_USE_AJAX_EFFECTS, 'options[]', $options[5]);
+    $ajaxeffectSelect = new \XoopsFormSelect(_MB_EXTGALLERY_USE_AJAX_EFFECTS, 'options[]', $options[5]);
     $ajaxeffectSelect->addOption('none', _MB_EXTGALLERY_AJAX_NONE);
     $ajaxeffectSelect->addOption('lightbox', _MB_EXTGALLERY_AJAX_LIGHTBOX);
     $ajaxeffectSelect->addOption('overlay', _MB_EXTGALLERY_AJAX_OVERLAY);
@@ -482,20 +489,20 @@ function extgalleryBlockEdit($options)
     $form              .= "<fieldset><legend style='font-weight:bold; color:#990000;'>" . _MB_EXTGALLERY_AJAX_FANCYBOX . '</legend>';
     $form              .= _MB_EXTGALLERY_FANCYBOX_BGCOLOR . ' : <input name="options[]" size="7" maxlength="7" value="' . $options[12] . '" type="text"><br>';
     $form              .= _MB_EXTGALLERY_FANCYBOX_OPACITY . ' : <input name="options[]" size="5" maxlength="5" value="' . $options[13] . '" type="text"><br>';
-    $fancyboxtinSelect = new XoopsFormSelect(_MB_EXTGALLERY_FANCYBOX_TIN, 'options[]', $options[14]);
+    $fancyboxtinSelect = new \XoopsFormSelect(_MB_EXTGALLERY_FANCYBOX_TIN, 'options[]', $options[14]);
     $fancyboxtinSelect->addOption('none', _MB_EXTGALLERY_FANCYBOX_NONE);
     $fancyboxtinSelect->addOption('elastic', _MB_EXTGALLERY_FANCYBOX_ELASTIC);
     $form               .= _MB_EXTGALLERY_FANCYBOX_TIN . ' : ' . $fancyboxtinSelect->render() . '<br>';
-    $fancyboxtoutSelect = new XoopsFormSelect(_MB_EXTGALLERY_FANCYBOX_TOUT, 'options[]', $options[15]);
+    $fancyboxtoutSelect = new \XoopsFormSelect(_MB_EXTGALLERY_FANCYBOX_TOUT, 'options[]', $options[15]);
     $fancyboxtoutSelect->addOption('none', _MB_EXTGALLERY_FANCYBOX_NONE);
     $fancyboxtoutSelect->addOption('elastic', _MB_EXTGALLERY_FANCYBOX_ELASTIC);
     $form             .= _MB_EXTGALLERY_FANCYBOX_TOUT . ' : ' . $fancyboxtoutSelect->render() . '<br>';
-    $fancyboxtpSelect = new XoopsFormSelect(_MB_EXTGALLERY_FANCYBOX_TITLEPOSITION, 'options[]', $options[16]);
+    $fancyboxtpSelect = new \XoopsFormSelect(_MB_EXTGALLERY_FANCYBOX_TITLEPOSITION, 'options[]', $options[16]);
     $fancyboxtpSelect->addOption('over', _MB_EXTGALLERY_FANCYBOX_OVER);
     $fancyboxtpSelect->addOption('inside', _MB_EXTGALLERY_FANCYBOX_INSIDE);
     $fancyboxtpSelect->addOption('outside', _MB_EXTGALLERY_FANCYBOX_OUTSIDE);
     $form               .= _MB_EXTGALLERY_FANCYBOX_TITLEPOSITION . ' : ' . $fancyboxtpSelect->render() . '<br>';
-    $fancyboxshowSelect = new XoopsFormSelect(_MB_EXTGALLERY_FANCYBOX_SHOWTYPE, 'options[]', $options[17]);
+    $fancyboxshowSelect = new \XoopsFormSelect(_MB_EXTGALLERY_FANCYBOX_SHOWTYPE, 'options[]', $options[17]);
     $fancyboxshowSelect->addOption('single', _MB_EXTGALLERY_FANCYBOX_SINGLE);
     $fancyboxshowSelect->addOption('group', _MB_EXTGALLERY_FANCYBOX_GROUP);
     $form .= _MB_EXTGALLERY_FANCYBOX_SHOWTYPE . ' : ' . $fancyboxshowSelect->render() . '<br>';
@@ -503,11 +510,11 @@ function extgalleryBlockEdit($options)
 
     //for prettyphoto
     $form              .= "<fieldset><legend style='font-weight:bold; color:#990000;'>" . _MB_EXTGALLERY_AJAX_PRETTPHOTO . '</legend>';
-    $prettyspeedSelect = new XoopsFormSelect(_MB_EXTGALLERY_PRETTPHOTO_SPEED, 'options[]', $options[18]);
+    $prettyspeedSelect = new \XoopsFormSelect(_MB_EXTGALLERY_PRETTPHOTO_SPEED, 'options[]', $options[18]);
     $prettyspeedSelect->addOption('fast', _MB_EXTGALLERY_PRETTPHOTO_FAST);
     $prettyspeedSelect->addOption('slow', _MB_EXTGALLERY_PRETTPHOTO_SLOW);
     $form              .= _MB_EXTGALLERY_PRETTPHOTO_SPEED . ' : ' . $prettyspeedSelect->render() . '<br>';
-    $prettythemeSelect = new XoopsFormSelect(_MB_EXTGALLERY_PRETTPHOTO_THEME, 'options[]', $options[19]);
+    $prettythemeSelect = new \XoopsFormSelect(_MB_EXTGALLERY_PRETTPHOTO_THEME, 'options[]', $options[19]);
     $prettythemeSelect->addOption('dark_rounded', _MB_EXTGALLERY_PRETTPHOTO_THEME1);
     $prettythemeSelect->addOption('dark_square', _MB_EXTGALLERY_PRETTPHOTO_THEME2);
     $prettythemeSelect->addOption('facebook', _MB_EXTGALLERY_PRETTPHOTO_THEME3);
@@ -515,7 +522,7 @@ function extgalleryBlockEdit($options)
     $prettythemeSelect->addOption('light_square', _MB_EXTGALLERY_PRETTPHOTO_THEME5);
     $form                 .= _MB_EXTGALLERY_PRETTPHOTO_THEME . ' : ' . $prettythemeSelect->render() . '<br>';
     $form                 .= _MB_EXTGALLERY_PRETTPHOTO_SLIDESPEED . ' : <input name="options[]" size="5" maxlength="5" value="' . $options[20] . '" type="text"><br>';
-    $prettyautoplaySelect = new XoopsFormSelect(_MB_EXTGALLERY_PRETTPHOTO_AUTOPLAY, 'options[]', $options[21]);
+    $prettyautoplaySelect = new \XoopsFormSelect(_MB_EXTGALLERY_PRETTPHOTO_AUTOPLAY, 'options[]', $options[21]);
     $prettyautoplaySelect->addOption('true', _MB_EXTGALLERY_TRUE);
     $prettyautoplaySelect->addOption('false', _MB_EXTGALLERY_FALSE);
     $form .= _MB_EXTGALLERY_PRETTPHOTO_AUTOPLAY . ' : ' . $prettyautoplaySelect->render() . '<br>';
@@ -566,17 +573,17 @@ function extgalleryBlockEdit($options)
 
 // Options Ajax photos
 /**
- * @param $options
+ * @param array $options
  *
  * @return string
  */
 function extgalleryAjaxEdit($options)
 {
-    $catHandler = xoops_getModuleHandler('publiccat', 'extgallery');
+    $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
 
     $form = _MB_EXTGALLERY_PHOTO_NUMBER . ' : <input name="options[]" size="5" maxlength="255" value="' . $options[0] . '" type="text"><br>';
 
-    $showTypeSelect = new XoopsFormSelect(_MB_EXTGALLERY_SHOW_TYPE, 'options[]', $options[1]);
+    $showTypeSelect = new \XoopsFormSelect(_MB_EXTGALLERY_SHOW_TYPE, 'options[]', $options[1]);
     $showTypeSelect->addOption('RandomPhoto', _MB_EXTGALLERY_TYPE_OP1);
     $showTypeSelect->addOption('LastPhoto', _MB_EXTGALLERY_TYPE_OP2);
     $showTypeSelect->addOption('TopViewPhoto', _MB_EXTGALLERY_TYPE_OP3);
@@ -584,14 +591,14 @@ function extgalleryAjaxEdit($options)
     $showTypeSelect->addOption('TopEcardPhoto', _MB_EXTGALLERY_TYPE_OP5);
     $form .= _MB_EXTGALLERY_SHOW_TYPE . ' : ' . $showTypeSelect->render() . '<br>';
 
-    $jqSelect = new XoopsFormSelect(_MB_EXTGALLERY_JQUERY, 'options[]', $options[2]);
+    $jqSelect = new \XoopsFormSelect(_MB_EXTGALLERY_JQUERY, 'options[]', $options[2]);
     $jqSelect->addOption('true', _MB_EXTGALLERY_TRUE);
     $jqSelect->addOption('false', _MB_EXTGALLERY_FALSE);
     $form .= _MB_EXTGALLERY_JQUERY . ' : ' . $jqSelect->render() . '<br>';
 
     //select option
     $form             .= "<fieldset><legend style='font-weight:bold; color:#990000;'>" . _MB_EXTGALLERY_USE_AJAX_EFFECTS . '</legend>';
-    $ajaxeffectSelect = new XoopsFormSelect(_MB_EXTGALLERY_USE_AJAX_EFFECTS, 'options[]', $options[3]);
+    $ajaxeffectSelect = new \XoopsFormSelect(_MB_EXTGALLERY_USE_AJAX_EFFECTS, 'options[]', $options[3]);
     $ajaxeffectSelect->addOption('galleryview', _MB_EXTGALLERY_GVIEW);
     $ajaxeffectSelect->addOption('galleria', _MB_EXTGALLERY_GRIA);
     $ajaxeffectSelect->addOption('microgallery', _MB_EXTGALLERY_MICRO);
@@ -613,16 +620,16 @@ function extgalleryAjaxEdit($options)
     $form        .= _MB_EXTGALLERY_BORDER . ' : <input name="options[]" size="20" maxlength="255" value="' . $options[15] . '" type="text"><br>';
     $form        .= _MB_EXTGALLERY_OVERLAY_OPACITY . ' : <input name="options[]" size="6" maxlength="255" value="' . $options[16] . '" type="text"><br>';
     $form        .= _MB_EXTGALLERY_OVERLAY_FONT_SIZE . ' : <input name="options[]" size="6" maxlength="255" value="' . $options[17] . '" type="text"><br>';
-    $themeSelect = new XoopsFormSelect(_MB_EXTGALLERY_SELECT_THEME, 'options[]', $options[18]);
+    $themeSelect = new \XoopsFormSelect(_MB_EXTGALLERY_SELECT_THEME, 'options[]', $options[18]);
     $themeSelect->addOption('light', _MB_EXTGALLERY_LIGHT);
     $themeSelect->addOption('dark', _MB_EXTGALLERY_DARK);
     $themeSelect->addOption('custom', _MB_EXTGALLERY_CUSTOM);
     $form           .= _MB_EXTGALLERY_SELECT_THEME . ' : ' . $themeSelect->render() . '<br>';
-    $positionSelect = new XoopsFormSelect(_MB_EXTGALLERY_POSITION, 'options[]', $options[19]);
+    $positionSelect = new \XoopsFormSelect(_MB_EXTGALLERY_POSITION, 'options[]', $options[19]);
     $positionSelect->addOption('bottom', _MB_EXTGALLERY_BOTTOM);
     $positionSelect->addOption('top', _MB_EXTGALLERY_TOP);
     $form         .= _MB_EXTGALLERY_POSITION . ' : ' . $positionSelect->render() . '<br>';
-    $easingSelect = new XoopsFormSelect(_MB_EXTGALLERY_EASING, 'options[]', $options[20]);
+    $easingSelect = new \XoopsFormSelect(_MB_EXTGALLERY_EASING, 'options[]', $options[20]);
     $easingSelect->addOption('swing', _MB_EXTGALLERY_EASING_OP1);
     $easingSelect->addOption('linear', _MB_EXTGALLERY_EASING_OP2);
     $easingSelect->addOption('easeInOutBack', _MB_EXTGALLERY_EASING_OP3);
@@ -636,16 +643,16 @@ function extgalleryAjaxEdit($options)
     $form        .= _MB_EXTGALLERY_GRIA_HEIGHT . ' : <input name="options[]" size="5" maxlength="255" value="' . $options[22] . '" type="text"><br>';
     $form        .= _MB_EXTGALLERY_GRIA_BGCOLOR . ' : <input name="options[]" size="7" maxlength="255" value="' . $options[23] . '" type="text"><br>';
     $form        .= _MB_EXTGALLERY_GRIA_BCOLOR . ' : <input name="options[]" size="7" maxlength="255" value="' . $options[24] . '" type="text"><br>';
-    $bgimgSelect = new XoopsFormSelect(_MB_EXTGALLERY_GRIA_BGIMG, 'options[]', $options[25]);
+    $bgimgSelect = new \XoopsFormSelect(_MB_EXTGALLERY_GRIA_BGIMG, 'options[]', $options[25]);
     $bgimgSelect->addOption('classic-map', _MB_EXTGALLERY_GRIA_BGIMG_OP1);
     $bgimgSelect->addOption('classic-map-b', _MB_EXTGALLERY_GRIA_BGIMG_OP2);
     $form .= _MB_EXTGALLERY_GRIA_BGIMG . ' : ' . $bgimgSelect->render() . '<br>';
 
-    $autoplaySelect = new XoopsFormSelect(_MB_EXTGALLERY_GRIA_AUTOPLAY, 'options[]', $options[26]);
+    $autoplaySelect = new \XoopsFormSelect(_MB_EXTGALLERY_GRIA_AUTOPLAY, 'options[]', $options[26]);
     $autoplaySelect->addOption('true', _MB_EXTGALLERY_TRUE);
     $autoplaySelect->addOption('false', _MB_EXTGALLERY_FALSE);
     $form         .= _MB_EXTGALLERY_GRIA_AUTOPLAY . ' : ' . $autoplaySelect->render() . '<br>';
-    $select_trans = new XoopsFormSelect(_MB_EXTGALLERY_GRIA_TRANS, 'options[]', $options[27]);
+    $select_trans = new \XoopsFormSelect(_MB_EXTGALLERY_GRIA_TRANS, 'options[]', $options[27]);
     $select_trans->addOption('fade', _MB_EXTGALLERY_GRIA_TRANS_TYP1);
     $select_trans->addOption('flash', _MB_EXTGALLERY_GRIA_TRANS_TYP2);
     $select_trans->addOption('pulse', _MB_EXTGALLERY_GRIA_TRANS_TYP3);
@@ -657,7 +664,7 @@ function extgalleryAjaxEdit($options)
     $form .= '</fieldset><br>';
 
     $form       .= "<fieldset><legend style='font-weight:bold; color:#990000;'>" . _MB_EXTGALLERY_MICRO . '</legend>';
-    $sizeSelect = new XoopsFormSelect(_MB_EXTGALLERY_MICRO_SIZE, 'options[]', $options[29]);
+    $sizeSelect = new \XoopsFormSelect(_MB_EXTGALLERY_MICRO_SIZE, 'options[]', $options[29]);
     $sizeSelect->addOption('small', _MB_EXTGALLERY_MICRO_SIZE_OP1);
     $sizeSelect->addOption('medium', _MB_EXTGALLERY_MICRO_SIZE_OP2);
     $sizeSelect->addOption('large', _MB_EXTGALLERY_MICRO_SIZE_OP3);
@@ -702,13 +709,13 @@ function extgalleryAjaxEdit($options)
 
 // Options TopSubmiter
 /**
- * @param $options
+ * @param array $options
  *
  * @return string
  */
 function extgalleryTopSubmitterEdit($options)
 {
-    $catHandler = xoops_getModuleHandler('publiccat', 'extgallery');
+    $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
 
     $form = _MB_EXTGALLERY_USER_NUMBER . ' : <input name="options[]" size="5" maxlength="255" value="' . $options[0] . '" type="text"><br>';
 
@@ -720,7 +727,7 @@ function extgalleryTopSubmitterEdit($options)
 }
 
 /**
- * @param $options
+ * @param array $options
  *
  * @return array
  */
@@ -728,8 +735,8 @@ function extgalleryList($options)
 {
     global $xoopsConfig;
 
-    /** @var ExtgalleryPhotoHandler $photoHandler */
-    $photoHandler     = xoops_getModuleHandler('publicphoto', 'extgallery');
+    /** @var Extgallery\PhotoHandler $photoHandler */
+    $photoHandler     = Extgallery\Helper::getInstance()->getHandler('PublicPhoto');
     $param            = ['limit' => $options[0]];
     $date             = $options[1];
     $hits             = $options[2];
@@ -791,13 +798,13 @@ function extgalleryList($options)
 }
 
 /**
- * @param $options
+ * @param array $options
  *
  * @return string
  */
 function extgalleryListEdit($options)
 {
-    $catHandler = xoops_getModuleHandler('publiccat', 'extgallery');
+    $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
     $form       = _MB_EXTGALLERY_PHOTO_NUMBER . ' : <input name="options[]" size="5" maxlength="255" value="' . $options[0] . '" type="text"><br>';
     //==================================
     $y2Checked = '';
@@ -827,7 +834,7 @@ function extgalleryListEdit($options)
     }
     $form .= _MB_EXTGALLERY_DISPLAY_RATE . ' : <input type="radio" name="options[3]" value="1"' . $y4Checked . '>&nbsp;' . _YES . '&nbsp;&nbsp;<input type="radio" name="options[3]" value="0"' . $n4Checked . '>' . _NO . '<br>';
     //==================================
-    $effectTypeSelect = new XoopsFormSelect(_MB_EXTGALLERY_SHOW_TYPE, 'options[]', $options[4]);
+    $effectTypeSelect = new \XoopsFormSelect(_MB_EXTGALLERY_SHOW_TYPE, 'options[]', $options[4]);
     $effectTypeSelect->addOption('RandomPhoto', _MB_EXTGALLERY_TYPE_OP1);
     $effectTypeSelect->addOption('LastPhoto', _MB_EXTGALLERY_TYPE_OP2);
     $effectTypeSelect->addOption('TopViewPhoto', _MB_EXTGALLERY_TYPE_OP3);

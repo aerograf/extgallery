@@ -15,9 +15,11 @@
  * @package     ExtGallery
  */
 
+use XoopsModules\Extgallery;
+
 include __DIR__ . '/header.php';
 include XOOPS_ROOT_PATH . '/header.php';
-require_once XOOPS_ROOT_PATH . '/modules/extgallery/class/publicPerm.php';
+//require_once XOOPS_ROOT_PATH . '/modules/extgallery/class/publicPerm.php';
 
 error_reporting(0);
 $GLOBALS['xoopsLogger']->activated = false;
@@ -28,14 +30,14 @@ if (function_exists('mb_http_output')) {
 }
 
 $catId = isset($_GET['id']) ? $_GET['id'] : 0;
-/** @var ExtgalleryPublicCatHandler $catHandler */
-$catHandler = xoops_getModuleHandler('publiccat', 'extgallery');
-/** @var ExtgalleryPublicPhotoHandler $photoHandler */
-$photoHandler = xoops_getModuleHandler('publicphoto', 'extgallery');
+/** @var Extgallery\PublicCategoryHandler $catHandler */
+$catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
+/** @var Extgallery\PublicPhotoHandler $photoHandler */
+$photoHandler = Extgallery\Helper::getInstance()->getHandler('PublicPhoto');
 $catObj       = $catHandler->getCat($catId);
 
 if (0 != $catId) {
-    $permHandler = ExtgalleryPublicPermHandler::getInstance();
+    $permHandler = Extgallery\PublicPermHandler::getInstance();
     if ($permHandler->isAllowed($GLOBALS['xoopsUser'], 'public_access', $catId)) {
         $catObj = $catHandler->getCat($catId);
         $cat    = $catHandler->objectToArray($catObj);
@@ -43,10 +45,10 @@ if (0 != $catId) {
 }
 
 header('Content-Type:text/xml; charset=' . _CHARSET);
-$xoopsTpl          = new XoopsTpl();
+$xoopsTpl          = new \XoopsTpl();
 $xoopsTpl->caching = 2;
 $xoopsTpl->xoops_setCacheTime($xoopsModuleConfig['timecache_rss'] * 60);
-$myts = MyTextSanitizer::getInstance();
+$myts = \MyTextSanitizer::getInstance();
 if (!$xoopsTpl->is_cached('db:extgallery_public-rss.tpl')) {
     $channel_category = $xoopsModule->getVar('dirname');
     // Check if ML Hack is installed, and if yes, parse the $content in formatForML
@@ -58,7 +60,7 @@ if (!$xoopsTpl->is_cached('db:extgallery_public-rss.tpl')) {
 
     $xoopsTpl->assign('channel_charset', _CHARSET);
     $xoopsTpl->assign('channel_title', htmlspecialchars($xoopsConfig['sitename'], ENT_QUOTES));
-    $xoopsTpl->assign('channel_link', PUBLISHER_URL);
+    $xoopsTpl->assign('channel_link', EXTGALLERY_URL);
     $xoopsTpl->assign('channel_desc', htmlspecialchars($xoopsConfig['slogan'], ENT_QUOTES));
     $xoopsTpl->assign('channel_lastbuild', formatTimestamp(time(), 'rss'));
     $xoopsTpl->assign('channel_webmaster', $xoopsConfig['adminmail']);
@@ -71,7 +73,7 @@ if (!$xoopsTpl->is_cached('db:extgallery_public-rss.tpl')) {
         $categories = [];
     }
 
-    $xoopsTpl->assign('channel_category', htmlspecialchars($channel_category));
+    $xoopsTpl->assign('channel_category', htmlspecialchars($channel_category, ENT_QUOTES));
     $xoopsTpl->assign('channel_generator', $xoopsModule->getVar('dirname'));
     $xoopsTpl->assign('channel_language', _LANGCODE);
     $xoopsTpl->assign('image_url', XOOPS_URL . $xoopsModuleConfig['logo_rss']);

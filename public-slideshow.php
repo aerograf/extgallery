@@ -15,8 +15,10 @@
  * @package     ExtGallery
  */
 
+use XoopsModules\Extgallery;
+
 include __DIR__ . '/header.php';
-require_once XOOPS_ROOT_PATH . '/modules/extgallery/class/publicPerm.php';
+//require_once XOOPS_ROOT_PATH . '/modules/extgallery/class/publicPerm.php';
 
 $GLOBALS['xoopsOption']['template_main'] = 'extgallery_public-slideshow.tpl';
 include XOOPS_ROOT_PATH . '/header.php';
@@ -28,14 +30,14 @@ if (!isset($_GET['id'])) {
 }
 
 // Check the access permission
-$permHandler = ExtgalleryPublicPermHandler::getInstance();
+$permHandler = Extgallery\PublicPermHandler::getInstance();
 if (!$permHandler->isAllowed($GLOBALS['xoopsUser'], 'public_access', $catId)) {
     redirect_header('index.php', 3, _NOPERM);
 }
-/** @var ExtgalleryCatHandler $catHandler */
-$catHandler = xoops_getModuleHandler('publiccat', 'extgallery');
-/** @var ExtgalleryPublicPhotoHandler $photoHandler */
-$photoHandler = xoops_getModuleHandler('publicphoto', 'extgallery');
+/** @var Extgallery\CategoryHandler $catHandler */
+$catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
+/** @var Extgallery\PublicPhotoHandler $photoHandler */
+$photoHandler = Extgallery\Helper::getInstance()->getHandler('PublicPhoto');
 
 $catObj = $catHandler->getCat($catId);
 
@@ -145,6 +147,7 @@ if (1 == $xoopsModuleConfig['galleriffic_autoplay']) {
 $xoopsTpl->assign('galleriffic_tdelay', $xoopsModuleConfig['galleriffic_tdelay']);
 $xoopsTpl->assign('galleriffic_tspeed', $xoopsModuleConfig['galleriffic_tspeed']);
 
+$var_width = 0;
 $var_nav_width   = 0;
 $var_nav_visible = 'hidden';
 
@@ -169,7 +172,6 @@ $xoopsTpl->assign('nav_visibility', $var_nav_visible);
 $xoopsTpl->assign('galleriffic_bordercolor', $xoopsModuleConfig['galleriffic_bordercolor']);
 $xoopsTpl->assign('galleriffic_bgcolor', $xoopsModuleConfig['galleriffic_bgcolor']);
 $xoopsTpl->assign('galleriffic_fontcolor', $xoopsModuleConfig['galleriffic_fontcolor']);
-$var_width = 0;
 $var_width = $xoopsModuleConfig['galleriffic_width'];
 $xoopsTpl->assign('content_width', $var_width + 10);
 $var_width = $xoopsModuleConfig['galleriffic_width'] + $var_nav_width + 100;

@@ -1,4 +1,5 @@
-<?php
+<?php namespace XoopsModules\Extgallery;
+
 /**
  * ExtGallery Class Manager
  *
@@ -15,35 +16,24 @@
  * @package     ExtGallery
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+use XoopsModules\Extgallery;
 
-require_once __DIR__ . '/photoHandler.php';
-require_once __DIR__ . '/publicPerm.php';
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 
-/**
- * Class ExtgalleryPublicPhoto
- */
-class ExtgalleryPublicPhoto extends ExtgalleryPhoto
-{
-    /**
-     * ExtgalleryPublicPhoto constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-}
+//require_once __DIR__ . '/photoHandler.php';
+//require_once __DIR__ . '/publicPerm.php';
+
 
 /**
- * Class ExtgalleryPublicPhotoHandler
+ * Class Extgallery\PublicPhotoHandler
  */
-class ExtgalleryPublicPhotoHandler extends ExtgalleryPhotoHandler
+class PublicPhotoHandler extends Extgallery\PhotoHandler
 {
     /**
-     * ExtgalleryPublicPhotoHandler constructor.
-     * @param XoopsDatabase $db
+     * Extgallery\PublicPhotoHandler constructor.
+     * @param \XoopsDatabase $db
      */
-    public function __construct(XoopsDatabase $db)
+    public function __construct(\XoopsDatabase $db)
     {
         parent::__construct($db, 'public');
     }
@@ -51,7 +41,7 @@ class ExtgalleryPublicPhotoHandler extends ExtgalleryPhotoHandler
     /**
      * @param $photo
      */
-    public function deleteFile(XoopsObject $photo = null)
+    public function deleteFile(\XoopsObject $photo = null)
     {
         if (file_exists(XOOPS_ROOT_PATH . '/uploads/extgallery/public-photo/thumb/thumb_' . $photo->getVar('photo_name'))) {
             unlink(XOOPS_ROOT_PATH . '/uploads/extgallery/public-photo/thumb/thumb_' . $photo->getVar('photo_name'));
@@ -82,7 +72,7 @@ class ExtgalleryPublicPhotoHandler extends ExtgalleryPhotoHandler
     /**
      * @return string
      */
-    public function _getUploadPhotoPath()
+    public function getUploadPhotoPath()
     {
         return XOOPS_ROOT_PATH . '/uploads/extgallery/public-photo/';
     }
@@ -97,12 +87,12 @@ class ExtgalleryPublicPhotoHandler extends ExtgalleryPhotoHandler
      */
     public function getUserAlbumPhotoPage($userId, $start, $sortby, $orderby)
     {
-        $catHandler = xoops_getModuleHandler('publiccat', 'extgallery');
+        $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
 
-        $criteria = new CriteriaCompo();
+        $criteria = new \CriteriaCompo();
         $criteria->add($catHandler->getCatRestrictCriteria());
-        $criteria->add(new Criteria('photo_approved', 1));
-        $criteria->add(new Criteria('uid', $userId));
+        $criteria->add(new \Criteria('photo_approved', 1));
+        $criteria->add(new \Criteria('uid', $userId));
         $criteria->setSort($sortby);
         $criteria->setOrder($orderby);
         $criteria->setStart($start);
@@ -119,13 +109,13 @@ class ExtgalleryPublicPhotoHandler extends ExtgalleryPhotoHandler
      */
     public function getUserAlbumPrevPhoto($userId, $photoDate)
     {
-        $catHandler = xoops_getModuleHandler('publiccat', 'extgallery');
+        $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
 
-        $criteria = new CriteriaCompo();
+        $criteria = new \CriteriaCompo();
         $criteria->add($catHandler->getCatRestrictCriteria());
-        $criteria->add(new Criteria('photo_approved', 1));
-        $criteria->add(new Criteria('uid', $userId));
-        $criteria->add(new Criteria('photo_date', $photoDate, '>'));
+        $criteria->add(new \Criteria('photo_approved', 1));
+        $criteria->add(new \Criteria('uid', $userId));
+        $criteria->add(new \Criteria('photo_date', $photoDate, '>'));
         $criteria->setSort('photo_date');
         $criteria->setOrder('ASC');
         $criteria->setLimit(1);
@@ -141,13 +131,13 @@ class ExtgalleryPublicPhotoHandler extends ExtgalleryPhotoHandler
      */
     public function getUserAlbumNextPhoto($userId, $photoDate)
     {
-        $catHandler = xoops_getModuleHandler('publiccat', 'extgallery');
+        $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
 
-        $criteria = new CriteriaCompo();
+        $criteria = new \CriteriaCompo();
         $criteria->add($catHandler->getCatRestrictCriteria());
-        $criteria->add(new Criteria('photo_approved', 1));
-        $criteria->add(new Criteria('uid', $userId));
-        $criteria->add(new Criteria('photo_date', $photoDate, '<'));
+        $criteria->add(new \Criteria('photo_approved', 1));
+        $criteria->add(new \Criteria('uid', $userId));
+        $criteria->add(new \Criteria('photo_date', $photoDate, '<'));
         $criteria->setSort('photo_date');
         $criteria->setOrder('DESC');
         $criteria->setLimit(1);
@@ -163,13 +153,13 @@ class ExtgalleryPublicPhotoHandler extends ExtgalleryPhotoHandler
      */
     public function getUserAlbumCurrentPhotoPlace($userId, $photoDate)
     {
-        $catHandler = xoops_getModuleHandler('publiccat', 'extgallery');
+        $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
 
-        $criteria = new CriteriaCompo();
+        $criteria = new \CriteriaCompo();
         $criteria->add($catHandler->getCatRestrictCriteria());
-        $criteria->add(new Criteria('photo_approved', 1));
-        $criteria->add(new Criteria('uid', $userId));
-        $criteria->add(new Criteria('photo_date', $photoDate, '>='));
+        $criteria->add(new \Criteria('photo_approved', 1));
+        $criteria->add(new \Criteria('uid', $userId));
+        $criteria->add(new \Criteria('photo_date', $photoDate, '>='));
         $criteria->setSort('photo_date');
         $criteria->setOrder('ASC');
 
@@ -183,12 +173,12 @@ class ExtgalleryPublicPhotoHandler extends ExtgalleryPhotoHandler
      */
     public function getUserAlbumCount($userId)
     {
-        $catHandler = xoops_getModuleHandler('publiccat', 'extgallery');
+        $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
 
-        $criteria = new CriteriaCompo();
+        $criteria = new \CriteriaCompo();
         $criteria->add($catHandler->getCatRestrictCriteria());
-        $criteria->add(new Criteria('photo_approved', 1));
-        $criteria->add(new Criteria('uid', $userId));
+        $criteria->add(new \Criteria('photo_approved', 1));
+        $criteria->add(new \Criteria('uid', $userId));
 
         return $this->getCount($criteria);
     }
@@ -200,9 +190,9 @@ class ExtgalleryPublicPhotoHandler extends ExtgalleryPhotoHandler
      */
     public function getUserPhotoAlbumId($userId)
     {
-        $criteria = new CriteriaCompo();
-        $criteria->add(new Criteria('uid', $userId));
-        $criteria->add(new Criteria('photo_approved', 1));
+        $criteria = new \CriteriaCompo();
+        $criteria->add(new \Criteria('uid', $userId));
+        $criteria->add(new \Criteria('photo_approved', 1));
 
         $sql = 'SELECT photo_id FROM ' . $this->db->prefix('extgallery_publicphoto') . ' ' . $criteria->renderWhere() . ' ORDER BY photo_date, photo_id DESC;';
 

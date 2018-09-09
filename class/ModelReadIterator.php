@@ -1,4 +1,5 @@
-<?php
+<?php namespace XoopsModules\Extgallery;
+
 /**
  * Extended object handlers
  *
@@ -17,6 +18,8 @@
  * @author          Taiwen Jiang <phppp@users.sourceforge.net>
  */
 
+use XoopsModules\Extgallery;
+
 /**
  * Object render handler class.
  *
@@ -26,18 +29,18 @@
  * {@link XoopsObjectAbstract}
  *
  */
-class ExtgalleryModelReadIterator extends XoopsModelRead
+class ModelReadIterator extends \XoopsModelRead
 {
     /**
      * get all objects matching a condition
      *
-     * @param  CriteriaElement $criteria  {@link CriteriaElement} to match
+     * @param  \CriteriaCompo $criteria  {@link CriteriaElement} to match
      * @param  array           $fields    variables to fetch
      * @param  bool            $asObject  flag indicating as object, otherwise as array
      * @param  bool            $id_as_key use the ID as key for the array
      * @return array           of objects/array {@link XoopsObject}
      */
-    public function &getAll(CriteriaElement $criteria = null, $fields = null, $asObject = true, $id_as_key = true)
+    public function &getAll(\CriteriaElement $criteria = null, $fields = null, $asObject = true, $id_as_key = true)
     {
         if (is_array($fields) && count($fields) > 0) {
             if (!in_array($this->handler->keyName, $fields)) {
@@ -50,7 +53,7 @@ class ExtgalleryModelReadIterator extends XoopsModelRead
         $limit = null;
         $start = null;
         $sql   = "SELECT {$select} FROM `{$this->handler->table}`";
-        if (isset($criteria) && is_subclass_of($criteria, 'criteriaelement')) {
+        if (isset($criteria) && is_subclass_of($criteria, 'CriteriaElement')) {
             $sql .= ' ' . $criteria->renderWhere();
             if ($sort = $criteria->getSort()) {
                 $sql      .= " ORDER BY {$sort} " . $criteria->getOrder();
@@ -96,13 +99,14 @@ class ExtgalleryModelReadIterator extends XoopsModelRead
      *
      * For performance consideration, getAll() is recommended
      *
-     * @param CriteriaElement $criteria  {@link CriteriaElement} conditions to be met
-     * @param bool            $id_as_key use the ID as key for the array
-     * @param bool            $as_object return an array of objects?
+     * @param \CriteriaElement $criteria  {@link CriteriaElement}
+     *                                    conditions to be met
+     * @param bool             $id_as_key use the ID as key for the array
+     * @param bool             $as_object return an array of objects?
      *
      * @return array
      */
-    public function &getObjects(CriteriaElement $criteria = null, $id_as_key = false, $as_object = true)
+    public function &getObjects(\CriteriaElement $criteria = null, $id_as_key = false, $as_object = true)
     {
         $objects =& $this->getAll($criteria, null, $as_object, $id_as_key);
 
@@ -112,17 +116,17 @@ class ExtgalleryModelReadIterator extends XoopsModelRead
     /**
      * Retrieve a list of objects data
      *
-     * @param CriteriaElement $criteria {@link CriteriaElement} conditions to be met
+     * @param \CriteriaElement $criteria {@link CriteriaElement} conditions to be met
      * @param int             $limit    Max number of objects to fetch
      * @param int             $start    Which record to start at
      *
      * @return array
      */
-    public function getList(CriteriaElement $criteria = null, $limit = 0, $start = 0)
+    public function getList(\CriteriaElement $criteria = null, $limit = 0, $start = 0)
     {
         $ret = [];
         if (null === $criteria) {
-            $criteria = new CriteriaCompo();
+            $criteria = new \CriteriaCompo();
         }
 
         $sql = "SELECT `{$this->handler->keyName}`";
@@ -130,7 +134,7 @@ class ExtgalleryModelReadIterator extends XoopsModelRead
             $sql .= ", `{$this->handler->identifierName}`";
         }
         $sql .= " FROM `{$this->handler->table}`";
-        if (isset($criteria) && is_subclass_of($criteria, 'criteriaelement')) {
+        if (isset($criteria) && is_subclass_of($criteria, 'CriteriaElement')) {
             $sql .= ' ' . $criteria->renderWhere();
             if ($sort = $criteria->getSort()) {
                 $sql .= ' ORDER BY ' . $sort . ' ' . $criteria->getOrder();
@@ -143,7 +147,7 @@ class ExtgalleryModelReadIterator extends XoopsModelRead
             return $ret;
         }
 
-        $myts = MyTextSanitizer::getInstance();
+        $myts = \MyTextSanitizer::getInstance();
         while (false !== ($myrow = $this->handler->db->fetchArray($result))) {
             //identifiers should be textboxes, so sanitize them like that
             $ret[$myrow[$this->handler->keyName]] = empty($this->handler->identifierName) ? 1 : $myts->htmlSpecialChars($myrow[$this->handler->identifierName]);
@@ -155,15 +159,15 @@ class ExtgalleryModelReadIterator extends XoopsModelRead
     /**
      * get IDs of objects matching a condition
      *
-     * @param  CriteriaElement $criteria {@link CriteriaElement} to match
+     * @param  \CriteriaElement $criteria {@link CriteriaElement} to match
      * @return array           of object IDs
      */
-    public function &getIds(CriteriaElement $criteria = null)
+    public function &getIds(\CriteriaElement $criteria = null)
     {
         $ret   = [];
         $sql   = "SELECT `{$this->handler->keyName}` FROM `{$this->handler->table}`";
         $limit = $start = null;
-        if (isset($criteria) && is_subclass_of($criteria, 'criteriaelement')) {
+        if (isset($criteria) && is_subclass_of($criteria, 'CriteriaElement')) {
             $sql   .= ' ' . $criteria->renderWhere();
             $limit = $criteria->getLimit();
             $start = $criteria->getStart();
@@ -185,7 +189,7 @@ class ExtgalleryModelReadIterator extends XoopsModelRead
      *
      * @param  int             $limit    Max number of objects to fetch
      * @param  int             $start    Which record to start at
-     * @param  CriteriaElement $criteria {@link CriteriaElement} to match
+     * @param  \CriteriaElement $criteria {@link CriteriaElement} to match
      * @param  array           $fields   variables to fetch
      * @param  bool            $asObject flag indicating as object, otherwise as array
      * @return array           of objects    {@link XoopsObject}
@@ -193,17 +197,17 @@ class ExtgalleryModelReadIterator extends XoopsModelRead
     public function &getByLimit(
         $limit = 0,
         $start = 0,
-        CriteriaElement $criteria = null,
+        \CriteriaElement $criteria = null,
         $fields = null,
         $asObject = true
     ) {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
         trigger_error(__CLASS__ . '::' . __FUNCTION__ . '() is deprecated, please use getAll instead.' . ". Called from {$trace[0]['file']}line {$trace[0]['line']}", E_USER_WARNING);
-        if (isset($criteria) && is_subclass_of($criteria, 'criteriaelement')) {
+        if (isset($criteria) && is_subclass_of($criteria, 'CriteriaElement')) {
             $criteria->setLimit($limit);
             $criteria->setStart($start);
         } elseif (!empty($limit)) {
-            $criteria = new CriteriaCompo();
+            $criteria = new \CriteriaCompo();
             $criteria->setLimit($limit);
             $criteria->setStart($start);
         }

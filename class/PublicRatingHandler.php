@@ -1,4 +1,5 @@
-<?php
+<?php namespace XoopsModules\Extgallery;
+
 /**
  * ExtGallery Class Manager
  *
@@ -15,19 +16,20 @@
  * @package     ExtGallery
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+use XoopsModules\Extgallery;
 
-require_once __DIR__ . '/ExtgalleryPersistableObjectHandler.php';
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
+
 
 /**
- * Class ExtgalleryPublicRating
+ * Class Extgallery\PublicRating
  */
-class ExtgalleryPublicRating extends XoopsObject
+class PublicRating extends \XoopsObject
 {
     public $externalKey = [];
 
     /**
-     * ExtgalleryPublicRating constructor.
+     * Extgallery\PublicRating constructor.
      */
     public function __construct()
     {
@@ -38,13 +40,13 @@ class ExtgalleryPublicRating extends XoopsObject
         $this->initVar('rating_rate', XOBJ_DTYPE_INT, 0, false);
 
         $this->externalKey['photo_id'] = [
-            'className'      => 'publicphoto',
+            'className'      => 'PublicPhoto',
             'getMethodeName' => 'getPhoto',
             'keyName'        => 'photo',
             'core'           => false
         ];
         $this->externalKey['uid']      = [
-            'className'      => 'user',
+            'className'      => 'User',
             'getMethodeName' => 'get',
             'keyName'        => 'user',
             'core'           => true
@@ -63,16 +65,16 @@ class ExtgalleryPublicRating extends XoopsObject
 }
 
 /**
- * Class ExtgalleryPublicRatingHandler
+ * Class Extgallery\PublicRatingHandler
  */
-class ExtgalleryPublicRatingHandler extends ExtgalleryPersistableObjectHandler
+class PublicRatingHandler extends Extgallery\PersistableObjectHandler
 {
     /**
-     * @param XoopsDatabase $db
+     * @param \XoopsDatabase $db
      */
-    public function __construct(XoopsDatabase $db)
+    public function __construct(\XoopsDatabase $db)
     {
-        parent::__construct($db, 'extgallery_publicrating', 'ExtgalleryPublicRating', 'rating_id');
+        parent::__construct($db, 'extgallery_publicrating', 'PublicRating', 'rating_id');
     }
 
     /**
@@ -83,7 +85,7 @@ class ExtgalleryPublicRatingHandler extends ExtgalleryPersistableObjectHandler
      */
     public function rate($photoId, $rating)
     {
-        /** @var ExtgalleryPublicPhotoHandler $photoHandler */
+        /** @var Extgallery\PublicPhotoHandler $photoHandler */
         $photoHandler = xoops_getModuleHandler('publicphoto', 'extgallery');
 
         $userId = is_object($GLOBALS['xoopsUser']) ? $GLOBALS['xoopsUser']->getVar('uid') : 0;
@@ -92,7 +94,7 @@ class ExtgalleryPublicRatingHandler extends ExtgalleryPersistableObjectHandler
         $rate->assignVar('uid', $userId);
         $rate->assignVar('rating_rate', $rating);
 
-        if ($this->_haveRated($rate)) {
+        if ($this->hasRated($rate)) {
             return false;
         }
 
@@ -110,7 +112,7 @@ class ExtgalleryPublicRatingHandler extends ExtgalleryPersistableObjectHandler
      */
     public function getRate($photoId)
     {
-        $criteria = new Criteria('photo_id', $photoId);
+        $criteria = new \Criteria('photo_id', $photoId);
         $avg      = $this->getAvg($criteria, 'rating_rate');
 
         return round($avg);
@@ -121,16 +123,16 @@ class ExtgalleryPublicRatingHandler extends ExtgalleryPersistableObjectHandler
      *
      * @return bool
      */
-    public function _haveRated(&$rate)
+    public function hasRated(&$rate)
     {
         // If the user is annonymous
         if (0 == $rate->getVar('uid')) {
             return false;
         }
 
-        $criteria = new CriteriaCompo();
-        $criteria->add(new Criteria('photo_id', $rate->getVar('photo_id')));
-        $criteria->add(new Criteria('uid', $rate->getVar('uid')));
+        $criteria = new \CriteriaCompo();
+        $criteria->add(new \Criteria('photo_id', $rate->getVar('photo_id')));
+        $criteria->add(new \Criteria('uid', $rate->getVar('uid')));
 
         return $this->getCount($criteria) > 0;
     }
