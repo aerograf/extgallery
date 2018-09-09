@@ -37,16 +37,13 @@ function xoops_module_uninstall_extgallery(\XoopsModule $module)
 
     $moduleDirName = basename(dirname(__DIR__));
     $moduleDirNameUpper   = strtoupper($moduleDirName);
-    $xsitemapHelper      = \Xmf\Module\Helper::getHelper($moduleDirName);
+     $helper      = Extgallery\Helper::getInstance();
 
     /** @var Extgallery\Utility $utility */
-    $utility     = new Extgallery\Utility();
-    if (!class_exists($utility)) {
-        xoops_load('utility', $moduleDirName);
-    }
+    $utility = new \XoopsModules\Extgallery\Utility();
 
     $success = true;
-    $xsitemapHelper->loadLanguage('admin');
+    $helper->loadLanguage('admin');
 
 
     //------------------------------------------------------------------

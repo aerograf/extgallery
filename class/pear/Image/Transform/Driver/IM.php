@@ -23,8 +23,8 @@
  * @link       http://pear.php.net/package/Image_Transform
  */
 
-//require_once 'Image/Transform.php';
-//require_once 'System.php';
+//require_once __DIR__ . '/Image/Transform.php';
+//require_once __DIR__ . '/System.php';
 require_once XOOPS_ROOT_PATH . '/modules/extgallery/class/pear/Image/Transform.php';
 require_once XOOPS_ROOT_PATH . '/modules/extgallery/class/pear/System.php';
 
@@ -70,7 +70,7 @@ class Image_Transform_Driver_IM extends Image_Transform
             define('IMAGE_TRANSFORM_IM_PATH', $path);
         }
         if (System::which(IMAGE_TRANSFORM_IM_PATH . 'convert' . ((OS_WINDOWS) ? '.exe' : ''))) {
-            include 'Image/Transform/Driver/Imagick/ImageTypes.php';
+            include __DIR__ . '/Image/Transform/Driver/Imagick/ImageTypes.php';
         } else {
             $this->isError(PEAR::raiseError('Couldn\'t find "convert" binary', IMAGE_TRANSFORM_ERROR_UNSUPPORTED));
         }
@@ -81,7 +81,7 @@ class Image_Transform_Driver_IM extends Image_Transform
      **/
     public function _init()
     {
-        $this->command = array();
+        $this->command = [];
     }
 
     /**
@@ -128,7 +128,7 @@ class Image_Transform_Driver_IM extends Image_Transform
             exec($cmd, $res, $exit);
 
             if (0 != $exit) {
-                return PEAR::raiseError("Cannot fetch image or images details.", true);
+                return PEAR::raiseError('Cannot fetch image or images details.', true);
             }
 
             $data        = explode(':', $res[0]);
@@ -169,8 +169,8 @@ class Image_Transform_Driver_IM extends Image_Transform
     /**
      * rotate
      *
-     * @param   int     angle   rotation angle
-     * @param   array   options no option allowed
+     * @param      $angle
+     * @param null $options
      * @return mixed TRUE or a PEAR error object on error
      */
     public function rotate($angle, $options = null)
@@ -330,8 +330,8 @@ class Image_Transform_Driver_IM extends Image_Transform
                 $type = 'JPG';
                 break;
         }
-        $options = array();
-        if (!is_null($quality)) {
+        $options = [];
+        if (null !== $quality) {
             $options['quality'] = $quality;
         }
         $quality = $this->_getOption('quality', $options, 75);
@@ -366,15 +366,15 @@ class Image_Transform_Driver_IM extends Image_Transform
                 $type = 'JPG';
                 break;
         }
-        $options = array();
-        if (!is_null($quality)) {
+        $options = [];
+        if (null !== $quality) {
             $options['quality'] = $quality;
         }
         $quality = $this->_getOption('quality', $options, 75);
 
         $this->_send_display_headers($type);
 
-        $cmd = $this->_prepare_cmd(IMAGE_TRANSFORM_IM_PATH, 'convert', implode(' ', $this->command) . " -quality $quality " . $this->image . ' ' . $type . ":-");
+        $cmd = $this->_prepare_cmd(IMAGE_TRANSFORM_IM_PATH, 'convert', implode(' ', $this->command) . " -quality $quality " . $this->image . ' ' . $type . ':-');
         passthru($cmd);
 
         if (!$this->keep_settings_on_save) {
@@ -391,7 +391,7 @@ class Image_Transform_Driver_IM extends Image_Transform
      */
     public function free()
     {
-        $this->command = array();
+        $this->command = [];
         $this->image   = '';
         $this->type    = '';
     }

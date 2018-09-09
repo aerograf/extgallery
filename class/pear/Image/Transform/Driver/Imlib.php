@@ -17,7 +17,7 @@
 // $Id: Imlib.php 258825 2008-04-30 23:00:13Z cweiske $
 // {{{ requires
 
-//require_once 'Image/Transform.php';
+//require_once __DIR__ . '/Image/Transform.php';
 require_once XOOPS_ROOT_PATH . '/modules/extgallery/class/pear/Image/Transform.php';
 
 // }}}
@@ -130,15 +130,15 @@ class Image_Transform_Driver_Imlib extends Image_Transform
      */
     public function addText($params)
     {
-        $default_params = array(
+        $default_params = [
             'text'  => 'This is Text',
             'x'     => 10,
             'y'     => 20,
-            'color' => array(255, 0, 0),
+            'color' => [255, 0, 0],
             'font'  => 'Arial.ttf',
             'size'  => '12',
             'angle' => IMLIB_TEXT_TO_RIGHT,
-        );
+        ];
         $params         = array_merge($default_params, $params);
         extract($params);
 
@@ -146,7 +146,7 @@ class Image_Transform_Driver_Imlib extends Image_Transform
             if ('#' == $color[0]) {
                 $color = $this->colorhex2colorarray($color);
             } else {
-                require_once 'Image/Transform/Driver/ColorsDefs.php';
+                require_once __DIR__ . '/Image/Transform/Driver/ColorsDefs.php';
                 $color = isset($colornames[$color]) ? $colornames[$color] : false;
             }
         }
@@ -244,7 +244,7 @@ class Image_Transform_Driver_Imlib extends Image_Transform
 
         $err     = 0;
         $type    = ('' == $type) ? $this->type : $type;
-        $quality = (is_null($quality)) ? $this->_options['quality'] : $quality;
+        $quality = (null === $quality) ? $this->_options['quality'] : $quality;
         imlib_image_set_format($this->imageHandle, $type);
         $return            = imlib_save_image($this->imageHandle, $filename, $err, $quality);
         $this->imageHandle = $this->oldHandle;
@@ -276,7 +276,7 @@ class Image_Transform_Driver_Imlib extends Image_Transform
         }
 
         $type    = ('' == $type) ? $this->type : $type;
-        $quality = (is_null($quality)) ? $this->_options['quality'] : $quality;
+        $quality = (null === $quality) ? $this->_options['quality'] : $quality;
         imlib_image_set_format($this->imageHandle, $type);
         $err = 0;
         header('Content-type: ' . $this->getMimeType($type));

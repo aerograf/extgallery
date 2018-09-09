@@ -15,7 +15,7 @@
  * @version    CVS: $Id: Cairowrapper.php 288112 2009-09-06 21:02:37Z cweiske $
  * @link       http://pear.php.net/package/Image_Transform
  */
-require_once 'Image/Transform.php';
+require_once __DIR__ . '/Image/Transform.php';
 
 /**
  * Cairo implementation for Image_Transform package using pecl's cairo_wrapper
@@ -42,9 +42,9 @@ class Image_Transform_Driver_Cairowrapper extends Image_Transform
      * @var    array
      * @access protected
      */
-    public $_supported_image_types = array(
+    public $_supported_image_types = [
         'png' => 'rw'
-    );
+    ];
 
     /**
      * Check settings

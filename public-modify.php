@@ -22,6 +22,9 @@ include __DIR__ . '/header.php';
 require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
 //require_once __DIR__ . '/class/Utility.php';
 
+/** @var Extgallery\Helper $helper */
+$helper = Extgallery\Helper::getInstance();
+
 if (isset($_GET['op'])) {
     $op = $_GET['op'];
 } else {
@@ -62,10 +65,10 @@ switch ($op) {
                     $data['photo_extra'] = $_POST['photo_extra'];
                 }
 
-                $photoHandler->modifyPhoto((int)$_POST['photo_id'], $data);
+                $photoHandler->modifyPhoto(\Xmf\Request::getInt('photo_id', 0, 'POST'), $data);
 
                 // For xoops tag
-                if ((1 == $xoopsModuleConfig['usetag']) && is_dir('../tag')) {
+                if ((1 == $helper->getConfig('usetag')) && is_dir('../tag')) {
                     $tagHandler = \XoopsModules\Tag\Helper::getInstance()->getHandler('Tag'); // xoops_getModuleHandler('tag', 'tag');
                     $tagHandler->updateByItem($_POST['tag'], $_POST['photo_id'], $xoopsModule->getVar('dirname'), 0);
                 }
@@ -77,7 +80,7 @@ switch ($op) {
                     $newCat     = $catHandler->getCat($_POST['cat_id']);
 
                     // Set new category as album
-                    $catHandler->modifyCat(['cat_id' => (int)$_POST['cat_id'], 'cat_isalbum' => 1]);
+                    $catHandler->modifyCat(['cat_id' => \Xmf\Request::getInt('cat_id', 0, 'POST'), 'cat_isalbum' => 1]);
 
                     // Update album count
                     if (1 == $oldCat->getVar('cat_nb_photo')) {
@@ -128,7 +131,7 @@ switch ($op) {
                 /** @var Extgallery\PublicPhotoHandler $photoHandler */
                 $photoHandler = Extgallery\Helper::getInstance()->getHandler('PublicPhoto');
 
-                $photo = $photoHandler->getPhoto((int)$_GET['id']);
+                $photo = $photoHandler->getPhoto(\Xmf\Request::getInt('id', 0, 'GET'));
 
                 echo '<img src="' . XOOPS_URL . '/uploads/extgallery/public-photo/thumb/thumb_' . $photo->getVar('photo_name') . '">';
 
@@ -141,12 +144,12 @@ switch ($op) {
                 $photo_desc = $myts->displayTarea($photo->getVar('photo_desc'), 0, 1, 1, 1, 0);
                 $editor     = $utility::getWysiwygForm(_MD_EXTGALLERY_DESC, 'photo_desc', $photo_desc, 15, 60, '100%', '350px', 'hometext_hidden');
                 $form->addElement($editor, false);
-                if ($xoopsModuleConfig['display_extra_field']) {
+                if ($helper->getConfig('display_extra_field')) {
                     $form->addElement(new \XoopsFormTextArea(_MD_EXTGALLERY_EXTRA_INFO, 'photo_extra', $photo->getVar('photo_extra')));
                 }
 
                 // For xoops tag
-                if ((1 == $xoopsModuleConfig['usetag']) && is_dir('../tag')) {
+                if ((1 == $helper->getConfig('usetag')) && is_dir('../tag')) {
                     $tagId = $photo->isNew() ? 0 : $photo->getVar('photo_id');
                     require_once XOOPS_ROOT_PATH . '/modules/tag/include/formtag.php';
                     $form->addElement(new TagFormTag('tag', 60, 255, $tagId, 0));
@@ -171,7 +174,7 @@ switch ($op) {
         /** @var Extgallery\PublicPhotoHandler $photoHandler */
         $photoHandler = Extgallery\Helper::getInstance()->getHandler('PublicPhoto');
 
-        $photo = $photoHandler->getPhoto((int)$_GET['id']);
+        $photo = $photoHandler->getPhoto(\Xmf\Request::getInt('id', 0, 'GET'));
         $photoHandler->deletePhoto($photo);
 
         $cat = $catHandler->getCat($photo->getVar('cat_id'));

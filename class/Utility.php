@@ -3,7 +3,6 @@
 use Xmf\Request;
 use  XoopsModules\Extgallery\Common;
 
-//require_once __DIR__ . '/../include/common.php';
 /**
  * Class Extgallery\Utility
  */
@@ -22,7 +21,8 @@ class Utility extends \XoopsObject
      */
     public static function getModuleOption($option)
     {
-        global $xoopsModuleConfig, $xoopsModule;
+        global $xoopsModule;
+        $helper = Extgallery\Helper::getInstance();
         static $tbloptions = [];
         if (is_array($tbloptions) && array_key_exists($option, $tbloptions)) {
             return $tbloptions[$option];

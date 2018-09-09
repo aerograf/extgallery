@@ -16,7 +16,7 @@
 // |          Alan Knowles <alan@akbkhome.com>                            |
 // +----------------------------------------------------------------------+
 
-//require_once 'Image/Transform/Driver/GD.php';
+//require_once __DIR__ . '/Image/Transform/Driver/GD.php';
 require_once XOOPS_ROOT_PATH . '/modules/extgallery/class/pear/Image/Transform/Driver/GD.php';
 
 /**
@@ -73,8 +73,8 @@ class Image_Transform_Driver_GD1 extends Image_Transform_Driver_GD
         if (true === $this->resized) {
             return PEAR::raiseError('You have already resized the image without saving it.  Your previous resizing will be overwritten', null, PEAR_ERROR_TRIGGER, E_USER_NOTICE);
         }
-        $new_img = ImageCreate($new_x, $new_y);
-        ImageCopyResized($new_img, $this->imageHandle, 0, 0, 0, 0, $new_x, $new_y, $this->img_x, $this->img_y);
+        $new_img = imagecreate($new_x, $new_y);
+        imagecopyresized($new_img, $this->imageHandle, 0, 0, 0, 0, $new_x, $new_y, $this->img_x, $this->img_y);
         $this->old_image   = $this->imageHandle;
         $this->imageHandle = $new_img;
         $this->resized     = true;
@@ -87,9 +87,9 @@ class Image_Transform_Driver_GD1 extends Image_Transform_Driver_GD
 
     public function rotate($angle, $options = null)
     {
-        if (null == $options) {
+        if (null === $options) {
             $autoresize = true;
-            $color_mask = array(255, 255, 0);
+            $color_mask = [255, 255, 0];
         } else {
             extract($options);
         }
@@ -108,7 +108,7 @@ class Image_Transform_Driver_GD1 extends Image_Transform_Driver_GD
             if ('#' == $color_mask{0}) {
                 $color_mask = $this->colorhex2colorarray($color_mask);
             } else {
-                require_once 'Image/Transform/Driver/ColorsDefs.php';
+                require_once __DIR__ . '/Image/Transform/Driver/ColorsDefs.php';
                 $color_mask = isset($colornames[$color_mask]) ? $colornames[$color_mask] : false;
             }
         }
@@ -165,7 +165,7 @@ class Image_Transform_Driver_GD1 extends Image_Transform_Driver_GD
             $max_y2   = $height2;
         }
 
-        $img2 = @imagecreateTrueColor($width2, $height2);
+        $img2 = @imagecreatetruecolor($width2, $height2);
 
         if (!is_resource($img2)) {
             return PEAR::raiseError('Cannot create buffer for the rotataion.', null, PEAR_ERROR_TRIGGER, E_USER_NOTICE);
