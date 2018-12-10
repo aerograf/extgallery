@@ -20,24 +20,22 @@ use XoopsModules\Extgallery;
 
 require_once __DIR__ . '/admin_header.php';
 
-if (isset($_GET['op'])) {
+if (\Xmf\Request::hasVar('op', 'GET')) {
     $op = $_GET['op'];
 } else {
     $op = 'default';
 }
 
-if (isset($_POST['step'])) {
+if (\Xmf\Request::hasVar('step', 'POST')) {
     $step = $_POST['step'];
 } else {
     $step = 'default';
 }
 
 switch ($op) {
-
     case 'create':
 
         switch ($step) {
-
             case 'enreg':
 
                 /** @var Extgallery\PublicCategoryHandler $catHandler */
@@ -48,7 +46,7 @@ switch ($op) {
                     'cat_desc'   => $_POST['cat_desc'],
                     'cat_weight' => $_POST['cat_weight'],
                     'cat_date'   => time(),
-                    'cat_imgurl' => $_POST['cat_imgurl']
+                    'cat_imgurl' => $_POST['cat_imgurl'],
                 ];
                 $catHandler->createCat($data);
 
@@ -63,10 +61,10 @@ switch ($op) {
     case 'modify':
 
         switch ($step) {
-
             case 'enreg':
 
-                if (isset($_POST['submit'])) {
+                if (\Xmf\Request::hasVar('submit', 'POST')) {
+                    /** @var Extgallery\PublicCategoryHandler $catHandler */
                     $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
                     $catHandler->modifyCat($_POST);
 
@@ -82,25 +80,29 @@ switch ($op) {
                 break;
 
             case 'default':
+
             default:
 
                 // Check if they are selected category
+
                 if (!isset($_POST['cat_id'])) {
                     redirect_header('photo.php', 3, _AM_EXTGALLERY_NO_CATEGORY_SELECTED);
                 }
-
+                /** @var Extgallery\PublicCategoryHandler $catHandler */
                 $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
                 /** @var Extgallery\PublicPhotoHandler $photoHandler */
                 $photoHandler = Extgallery\Helper::getInstance()->getHandler('PublicPhoto');
 
-                $cat       = $catHandler->getCat($_POST['cat_id']);
+                /** @var Extgallery\PublicCategory $cat */
+                $cat           = $catHandler->getCat($_POST['cat_id']);
                 $photosCat = $photoHandler->getCatPhoto($cat);
 
                 xoops_cp_header();
 
                 $selectedPhoto = '../assets/images/blank.gif';
                 $photoArray    = [];
-                foreach ($photosCat as $photo) {
+            /** @var Extgallery\Photo $photo */
+            foreach ($photosCat as $photo) {
                     if ('' != $photo->getVar('photo_serveur')) {
                         $url = $photo->getVar('photo_serveur') . 'thumb_' . $photo->getVar('photo_name');
                     } else {
@@ -171,9 +173,8 @@ switch ($op) {
     case 'delete':
 
         switch ($step) {
-
             case 'enreg':
-
+                /** @var Extgallery\PublicCategoryHandler $catHandler */
                 $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
 
                 $catHandler->deleteCat($_POST['cat_id']);
@@ -187,8 +188,9 @@ switch ($op) {
         break;
 
     case 'default':
-    default:
 
+    default:
+    /** @var Extgallery\PublicCategoryHandler $catHandler */
         $catHandler = Extgallery\Helper::getInstance()->getHandler('PublicCategory');
 
         xoops_cp_header();
@@ -212,6 +214,7 @@ switch ($op) {
         $xoopsTpl->display(XOOPS_ROOT_PATH . '/modules/extgallery/templates/admin/extgallery_admin_public_category.tpl');
         //        xoops_cp_footer();
         require_once __DIR__ . '/admin_footer.php';
+
         break;
 
 }
