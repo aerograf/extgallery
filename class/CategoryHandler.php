@@ -1,4 +1,6 @@
-<?php namespace XoopsModules\Extgallery;
+<?php
+
+namespace XoopsModules\Extgallery;
 
 /**
  * ExtGallery Class Manager
@@ -78,6 +80,7 @@ class CategoryHandler extends Extgallery\PersistableObjectHandler
         if (isset($data['cat_pid']) || isset($data['nlevel']) || isset($data['nright']) || isset($data['nleft'])) {
             $this->rebuild();
         }
+
         return '';
     }
 
@@ -159,13 +162,11 @@ class CategoryHandler extends Extgallery\PersistableObjectHandler
 
     /**
      * @param int $id
-     *
-     * @return null
      */
     public function getCat($id = 0)
     {
         $criteria = new \CriteriaCompo();
-        $temp = $this->getCatRestrictCriteria('public_displayed');
+        $temp     = $this->getCatRestrictCriteria('public_displayed');
         if (false !== $temp) {
             $criteria->add($temp);
         }
@@ -204,7 +205,6 @@ class CategoryHandler extends Extgallery\PersistableObjectHandler
      */
     public function nbPhoto(&$cat)
     {
-
         /** @var Extgallery\CategoryHandler $this ->_photoHandler */
         return $this->_photoHandler->nbPhoto($cat);
     }
@@ -358,7 +358,7 @@ class CategoryHandler extends Extgallery\PersistableObjectHandler
             if ('node' === $selectMode && (1 != $cat->getVar('nright') - $cat->getVar('nleft'))) {
                 // If the brownser is IE the parent cat isn't displayed
                 //                if (preg_match('`MSIE`', $_SERVER['HTTP_USER_AGENT'])) {
-                if (false !== strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
+                if (false !== mb_strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
                     continue;
                 }
                 $disableOption = ' disabled="disabled"';
@@ -397,7 +397,7 @@ class CategoryHandler extends Extgallery\PersistableObjectHandler
         $cats           = $this->getDescendants();
         $ret            = '<select name="options[]" multiple="multiple">';
         $selectedOption = '';
-        if ($allCat = in_array(0, $selected)) {
+        if ($allCat = in_array(0, $selected, true)) {
             $selectedOption = ' selected';
         }
         $ret .= '<option value="0"' . $selectedOption . '>' . _MB_EXTGALLERY_ALL_CATEGORIES . '</option>';
@@ -409,7 +409,7 @@ class CategoryHandler extends Extgallery\PersistableObjectHandler
             $selectedOption = '';
             $disableOption  = '';
 
-            if (!$allCat && in_array($cat->getVar('cat_id'), $selected)) {
+            if (!$allCat && in_array($cat->getVar('cat_id'), $selected, true)) {
                 $selectedOption = ' selected';
             }
 
@@ -580,6 +580,7 @@ class CategoryHandler extends Extgallery\PersistableObjectHandler
 
             return $criteria;
         }
+
         return false;
     }
 

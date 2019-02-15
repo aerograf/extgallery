@@ -29,7 +29,7 @@ $photoHandler = Extgallery\Helper::getInstance()->getHandler('PublicPhoto');
 $photoHandler->updateHits($photoId);
 $photo = $photoHandler->get($photoId);
 
-switch (strtolower(strrchr($photo->getVar('photo_name'), '.'))) {
+switch (mb_strtolower(mb_strrchr($photo->getVar('photo_name'), '.'))) {
     case '.png':
         $type = 'image/png';
 

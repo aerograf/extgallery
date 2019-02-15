@@ -1,4 +1,6 @@
-<?php namespace XoopsModules\Extgallery;
+<?php
+
+namespace XoopsModules\Extgallery;
 
 /***************************************************************/
 /* PhpCaptcha - A visual and audio CAPTCHA generation library
@@ -41,8 +43,6 @@
 Documentation is available at http://www.ejeliot.com/pages/2
 
 */
-
-use XoopsModules\Extgallery;
 
 // this class will only work correctly if a visual CAPTCHA has been created first using PhpCaptcha
 
@@ -97,7 +97,7 @@ class AudioPhpCaptcha
      */
     public function Mask($sText)
     {
-        $iLength = strlen($sText);
+        $iLength = mb_strlen($sText);
 
         // loop through characters in code and format
         $sFormattedText = '';

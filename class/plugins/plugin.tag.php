@@ -7,7 +7,6 @@ use XoopsModules\Extgallery;
  *
  * @return bool
  */
-
 function extgallery_tag_iteminfo(&$items)
 {
     if (empty($items) || !is_array($items)) {
@@ -28,7 +27,7 @@ function extgallery_tag_iteminfo(&$items)
     foreach (array_keys($items) as $cat_id) {
         foreach (array_keys($items[$cat_id]) as $item_id) {
             if (isset($items_obj[$item_id])) {
-                $item_obj                 =& $items_obj[$item_id];
+                $item_obj                 = &$items_obj[$item_id];
                 $items[$cat_id][$item_id] = [
                     'title'   => $item_obj->getVar('photo_title'),
                     'uid'     => $item_obj->getVar('uid'),

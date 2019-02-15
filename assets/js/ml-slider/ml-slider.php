@@ -60,7 +60,6 @@ class MetaSliderPlugin
      */
     public function __construct()
     {
-
         // create the admin menu/page
         add_action('admin_menu', [$this, 'register_admin_menu'], 9553);
 
@@ -167,7 +166,6 @@ class MetaSliderPlugin
      */
     public function custom_media_uploader_tabs($strings)
     {
-
         //update strings
         if (\Xmf\Request::hasVar('page', 'GET') && 'metaslider' == $_GET['page']) {
             $strings['insertMediaTitle'] = __('Image', 'metaslider');
@@ -188,6 +186,7 @@ class MetaSliderPlugin
      * Add extra tabs to the default wordpress Media Manager iframe
      *
      * @var array existing media manager tabs
+     * @param mixed $tabs
      * @return array
      */
     public function custom_media_upload_tab_name($tabs)
@@ -195,7 +194,7 @@ class MetaSliderPlugin
         $metaslider_tabs = ['post_feed', 'layer', 'youtube', 'vimeo'];
 
         // restrict our tab changes to the meta slider plugin page
-        if ((isset($_GET['page']) && 'metaslider' === $_GET['page']) || (isset($_GET['tab']) && in_array($_GET['tab'], $metaslider_tabs))) {
+        if ((isset($_GET['page']) && 'metaslider' === $_GET['page']) || (isset($_GET['tab']) && in_array($_GET['tab'], $metaslider_tabs, true))) {
             $newtabs = [];
 
             if (function_exists('is_plugin_active') && !is_plugin_active('ml-slider-pro/ml-slider-pro.php')) {
@@ -309,9 +308,6 @@ class MetaSliderPlugin
         }
     }
 
-    /**
-     *
-     */
     public function help_tab()
     {
         $screen = get_current_screen();
@@ -391,7 +387,7 @@ class MetaSliderPlugin
 
         $settings = array_merge(get_post_meta($id, 'ml-slider_settings', true), $shortcode_settings);
 
-        if (isset($settings['type']) && in_array($settings['type'], ['flex', 'coin', 'nivo', 'responsive'])) {
+        if (isset($settings['type']) && in_array($settings['type'], ['flex', 'coin', 'nivo', 'responsive'], true)) {
             $type = $settings['type'];
         }
 
@@ -431,7 +427,6 @@ class MetaSliderPlugin
      */
     public function admin_process()
     {
-
         // this function should only ever be called from the Meta Slider admin page.
         if (!is_admin()) {
             return;
@@ -470,7 +465,6 @@ class MetaSliderPlugin
      */
     private function add_slider()
     {
-
         // check nonce
         check_admin_referer('metaslider_add_slider');
 
@@ -511,7 +505,6 @@ class MetaSliderPlugin
      */
     private function delete_slider($id)
     {
-
         // check nonce
         check_admin_referer('metaslider_delete_slider');
 
@@ -610,13 +603,11 @@ class MetaSliderPlugin
     }
 
     /**
-     *
      * @param  array $aFields - array of field to render
      * @return string
      */
     public function build_settings_rows($aFields)
     {
-
         // order the fields by priority
         uasort($aFields, [$this, 'compare_elems']);
 
@@ -1350,7 +1341,7 @@ class MetaSliderPlugin
     {
         global $pagenow;
 
-        if (in_array($pagenow, ['post.php', 'page.php', 'post-new.php', 'post-edit.php'])) {
+        if (in_array($pagenow, ['post.php', 'page.php', 'post-new.php', 'post-edit.php'], true)) {
             $context .= '<a href="#TB_inline?&inlineId=choose-meta-slider" class="thickbox button" title="'
                         . __('Select slideshow to insert into post', 'metaslider')
                         . '"><span class="wp-media-buttons-icon" style="background: url('
@@ -1371,7 +1362,7 @@ class MetaSliderPlugin
         global $pagenow;
 
         // Only run in post/page creation and edit screens
-        if (in_array($pagenow, ['post.php', 'page.php', 'post-new.php', 'post-edit.php'])) {
+        if (in_array($pagenow, ['post.php', 'page.php', 'post-new.php', 'post-edit.php'], true)) {
             $sliders = $this->all_meta_sliders('title'); ?>
 
             <script type="text/javascript">

@@ -306,7 +306,8 @@ define('_AM_EXTGALLERY_EXTENSION_INFO', 'Extension information');
 define('_AM_EXTGALLERY_EXTENSION_NOT_INSTALLED', 'Extension not installed');
 define('_AM_EXTGALLERY_INSTALL_EXTENSION', 'Install extension');
 define('_AM_EXTGALLERY_EXTENSION_OK', 'Extension available');
-define('_AM_EXTGALLERY_EXTENSION_NOTICE', 'This extension allow you to display photo on all the site just by adding a <b>gallery</b> tag to your text. A button ( <button type="button" class="btn btn-default");" onmouseover="style.cursor=\"hand\' title=""><span class="fa fa-file-image-o" aria-hidden="true"></span><span style="font-size:75%;"> Gallery</span></button> ) is displayed on XOOPS editor.');
+define('_AM_EXTGALLERY_EXTENSION_NOTICE',
+       'This extension allow you to display photo on all the site just by adding a <b>gallery</b> tag to your text. A button ( <button type="button" class="btn btn-default");" onmouseover="style.cursor=\"hand\' title=""><span class="fa fa-file-image-o" aria-hidden="true"></span><span style="font-size:75%;"> Gallery</span></button> ) is displayed on XOOPS editor.');
 define('_AM_EXTGALLERY_EXT_FILE_DONT_EXIST', "Extension file don't exist on repository :<br><b>Server : </b>%s<br><b>File : </b>%s");
 define('_AM_EXTGALLERY_EXT_FILE_DONT_EXIST_SHORT', "Extension file don't exist");
 define('_AM_EXTGALLERY_EXTENSION_INSTALLED', 'Extension installed');
@@ -335,7 +336,7 @@ define('_AM_EXTGALLERY_ABOUT_DESCRIPTION', 'Description: ');
 
 // text in admin footer
 define('_AM_EXTGALLERY_ADMIN_FOOTER', "<div class='right smallsmall italic pad5'>XOOPS Tag is maintained by the <a class='tooltip' rel='external' href='https://xoops.org/' title='Visit XOOPS Community'>XOOPS Community</a></div>");
-define('_EXTGALLERY_ADMIN_', ' '); //
+define('_EXTGALLERY_ADMIN_', ' ');
 
 // Add File size define (cesagonchu)
 define('_AM_EXTGALLERY_UPLOAD_MAX_FILESIZE', 'Maximum file size to upload: ');

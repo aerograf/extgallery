@@ -1,4 +1,6 @@
-<?php namespace XoopsModules\Extgallery;
+<?php
+
+namespace XoopsModules\Extgallery;
 
 /***************************************************************/
 /* PhpCaptcha - A visual and audio CAPTCHA generation library
@@ -41,8 +43,6 @@
 Documentation is available at http://www.ejeliot.com/pages/2
 
 */
-
-use XoopsModules\Extgallery;
 
 /************************ Default Options **********************/
 
@@ -104,7 +104,6 @@ class PhpCaptcha
         $iHeight = CAPTCHA_HEIGHT // height of image
     )
     {
-
         // get parameters
         $this->aFonts = $aFonts;
         $this->SetNumChars(CAPTCHA_NUM_CHARS);
@@ -188,7 +187,6 @@ class PhpCaptcha
      */
     public function SetCharSet($vCharSet)
     {
-
         // check for input type
         if (is_array($vCharSet)) {
             $this->aCharSet = $vCharSet;
@@ -203,7 +201,7 @@ class PhpCaptcha
                 // loop through items
                 foreach ($aCharSet as $sCurrentItem) {
                     // a range should have 3 characters, otherwise is normal character
-                    if (3 == strlen($sCurrentItem)) {
+                    if (3 == mb_strlen($sCurrentItem)) {
                         // split on range character
                         $aRange = explode('-', $sCurrentItem);
 
@@ -268,9 +266,8 @@ class PhpCaptcha
      */
     public function SetFileType($sFileType)
     {
-
         // check for valid file type
-        if (in_array($sFileType, ['gif', 'png', 'jpeg'])) {
+        if (in_array($sFileType, ['gif', 'png', 'jpeg'], true)) {
             $this->sFileType = $sFileType;
         } else {
             $this->sFileType = 'jpeg';
@@ -295,7 +292,6 @@ class PhpCaptcha
 
     public function DrawOwnerText()
     {
-
         // allocate owner text colour
         $iBlack = imagecolorallocate($this->oImage, 0, 0, 0);
         // get height of selected font
@@ -315,7 +311,6 @@ class PhpCaptcha
 
     public function GenerateCode()
     {
-
         // reset code
         $this->sCode = '';
 
@@ -332,7 +327,7 @@ class PhpCaptcha
 
         // save code in session variable
         if ($this->bCaseInsensitive) {
-            $_SESSION[CAPTCHA_SESSION_ID] = strtoupper($this->sCode);
+            $_SESSION[CAPTCHA_SESSION_ID] = mb_strtoupper($this->sCode);
         } else {
             $_SESSION[CAPTCHA_SESSION_ID] = $this->sCode;
         }
@@ -342,7 +337,7 @@ class PhpCaptcha
     {
         $iShadowColour = '';
         // loop through and write out selected number of characters
-        for ($i = 0, $iMax = strlen($this->sCode); $i < $iMax; ++$i) {
+        for ($i = 0, $iMax = mb_strlen($this->sCode); $i < $iMax; ++$i) {
             // select random font
             $sCurrentFont = $this->aFonts[array_rand($this->aFonts)];
 
@@ -427,7 +422,6 @@ class PhpCaptcha
      */
     public function Create($sFilename = '')
     {
-
         // check for required gd functions
         if (!function_exists('imagecreate') || !function_exists("image$this->sFileType")
             || ('' != $this->vBackgroundImages && !function_exists('imagecreatetruecolor'))) {
@@ -493,7 +487,7 @@ class PhpCaptcha
     public static function Validate($sUserCode, $bCaseInsensitive = true)
     {
         if ($bCaseInsensitive) {
-            $sUserCode = strtoupper($sUserCode);
+            $sUserCode = mb_strtoupper($sUserCode);
         }
 
         if (!empty($_SESSION[CAPTCHA_SESSION_ID]) && $sUserCode == $_SESSION[CAPTCHA_SESSION_ID]) {

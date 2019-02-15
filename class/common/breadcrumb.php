@@ -1,4 +1,6 @@
-<?php namespace XoopsModules\Extgallery\Common;
+<?php
+
+namespace XoopsModules\Extgallery\Common;
 
 /*
  You may not change or alter any portion of this comment or credits
@@ -34,9 +36,6 @@ class Breadcrumb
     public  $dirname;
     private $bread = [];
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->dirname = basename(dirname(dirname(__DIR__)));
@@ -58,7 +57,6 @@ class Breadcrumb
 
     /**
      * Render Pedigree BreadCrumb
-     *
      */
     public function render()
     {
