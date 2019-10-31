@@ -55,7 +55,8 @@ if (!$permHandler->isAllowed($GLOBALS['xoopsUser'], 'public_access', $photo['cat
 }
 
 // Don't update counter if user come from rating page
-if (null !== Request::getString('HTTP_REFERER', '', 'SERVER') && basename(Request::getString('HTTP_REFERER', '', 'SERVER')) != 'public-rating.php?photoId=' . $photoId) {
+//if (null !== Request::getString('HTTP_REFERER', '', 'SERVER') && basename(Request::getString('HTTP_REFERER', '', 'SERVER')) != 'public-rating.php?photoId=' . $photoId) {
+if (null !== Request::getString('HTTP_REFERER', '', 'SERVER') && basename(Request::getString('HTTP_REFERER', '', 'SERVER')) !== 'public-rating.php?photoId=' . $photoId) {
     $photoHandler->updateHits($photoId);
 }
 
@@ -76,7 +77,10 @@ $xoopsTpl->assign('catPath', $catPath);
 
 $photosIds = $photoHandler->getPhotoAlbumId($photoObj->getVar('cat_id'));
 
-$nbPhoto           = count($photosIds);
+$nbPhoto = 0;
+if ($photosIds && is_array($photosIds)) {
+    $nbPhoto = count($photosIds);
+}
 $currentPhotoPlace = array_search($photoId, $photosIds, true);
 
 if (1 == $nbPhoto) {
@@ -145,8 +149,10 @@ if ($helper->getConfig('enable_rating')) {
 //DNPROSSI - added preferences option
 //  enable_info, enable_resolution, enable_download, enable_date
 //  enable_ecards, enable_submitter_lnk, enable_photo_hits
-if ('photo' === $helper->getConfig('info_view') || 'both' === $helper->getConfig('info_view')) {
-    if ('public' === $helper->getConfig('pubusr_info_view') || 'both' === $helper->getConfig('pubusr_info_view')) {
+//if ('photo' === $helper->getConfig('info_view') || 'both' === $helper->getConfig('info_view')) {
+if (in_array($helper->getConfig('info_view'), ['photo', 'both'])) {
+    //    if ('public' === $helper->getConfig('pubusr_info_view') || 'both' === $helper->getConfig('pubusr_info_view')) {
+    if (in_array($helper->getConfig('pubusr_info_view'), ['public', 'both'])) {
         if (0 == $helper->getConfig('enable_info')) {
             $enable_info = $helper->getConfig('enable_info');
         } else {
